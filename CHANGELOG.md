@@ -22,6 +22,7 @@ FEATURES:
 IMPROVEMENTS:
 
   * core: Improve message to list only resources which will be destroyed when using `--target` [GH-3859]
+  * connection/ssh: accept private_key contents instead of paths [GH-3846]
   * provider/google: preemptible option for instance_template [GH-3667]
   * provider/google: Accurate Terraform Version [GH-3554]
   * provider/google: Simplified auth (DefaultClient support) [GH-3553]
@@ -42,6 +43,7 @@ IMPROVEMENTS:
   * provider/aws: `engine_version` is now optional for DB Instance [GH-3744]
   * provider/aws: Add configuration to enable copying RDS tags to final snapshot [GH-3529]
   * provider/aws: RDS Cluster additions (`backup_retention_period`, `preferred_backup_window`, `preferred_maintenance_window`) [GH-3757]
+  * providers/aws: Document and validate ELB ssl_cert and protocol requirements [GH-3887]
   * provider/openstack: Use IPv4 as the defeault IP version for subnets [GH-3091]
   * provider/aws: Apply security group after restoring db_instance from snapshot [GH-3513]
   * provider/aws: Making the AutoScalingGroup name optional [GH-3710]
@@ -49,6 +51,7 @@ IMPROVEMENTS:
   * provider/digitalocean: Make user_data force a new droplet [GH-3740]
   * provider/vsphere: Do not add network interfaces by default [GH-3652]
   * provider/openstack: Configure Fixed IPs through ports [GH-3772]
+  * provider/openstack: Specify a port ID on a Router Interface [GH-3903]
 
 BUG FIXES:
 
@@ -59,6 +62,7 @@ BUG FIXES:
   * provider/aws: Fix issue with order of Termincation Policies in AutoScaling Groups. 
       This will introduce plans on upgrade to this version, in order to correct the ordering [GH-2890]
   * provider/aws: Allow cluster name, not only ARN for `aws_ecs_service` [GH-3668]
+  * provider/aws: Only set `weight` on an `aws_route53_record` if it has been set in configuration [GH-3900]
   * provider/aws: ignore association not exist on route table destroy [GH-3615]
   * provider/aws: Fix policy encoding issue with SNS Topics [GH-3700]
   * provider/aws: Correctly export ARN in `aws_iam_saml_provider` [GH-3827]
