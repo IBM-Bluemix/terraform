@@ -32,7 +32,7 @@ func (b *BasicGraphBuilder) Build(path []string) (*Graph, error) {
 
 		log.Printf(
 			"[TRACE] Graph after step %T:\n\n%s",
-			step, g.String())
+			step, g.StringWithNodeTypes())
 	}
 
 	// Validate the graph structure
@@ -152,7 +152,10 @@ func (b *BuiltinGraphBuilder) Steps(path []string) []GraphTransformer {
 
 			// Create the destruction nodes
 			&DestroyTransformer{FullDestroy: b.Destroy},
-			&CreateBeforeDestroyTransformer{},
+			b.conditional(&conditionalOpts{
+				If:   func() bool { return !b.Destroy },
+				Then: &CreateBeforeDestroyTransformer{},
+			}),
 			b.conditional(&conditionalOpts{
 				If:   func() bool { return !b.Verbose },
 				Then: &PruneDestroyTransformer{Diff: b.Diff, State: b.State},

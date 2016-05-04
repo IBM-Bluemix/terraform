@@ -39,7 +39,7 @@ explained below:
 - Static credentials
 - Environment variables
 - Shared credentials file
-
+- EC2 Role
 
 ### Static credentials ###
 
@@ -96,6 +96,21 @@ provider "aws" {
 }
 ```
 
+###EC2 Role
+
+If you're running Terraform from an EC2 instance with IAM Instance Profile
+using IAM Role, Terraform will just ask
+[the metadata API](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#instance-metadata-security-credentials)
+endpoint for credentials.
+
+This is a preferred approach over any other when running in EC2 as you can avoid
+hardcoding credentials. Instead these are leased on-the-fly by Terraform
+which reduces the chance of leakage.
+
+You can provide custom metadata API endpoint via `AWS_METADATA_ENDPOINT` variable
+which expects the endpoint URL including the version
+and defaults to `http://169.254.169.254:80/latest`.
+
 ## Argument Reference
 
 The following arguments are supported in the `provider` block:
@@ -133,9 +148,47 @@ The following arguments are supported in the `provider` block:
   to prevent you mistakenly using a wrong one (and end up destroying live environment).
   Conflicts with `allowed_account_ids`.
 
+* `insecure` - (Optional) Optional) Explicitly allow the provider to
+  perform "insecure" SSL requests. If omitted, default value is `false`
+
 * `dynamodb_endpoint` - (Optional) Use this to override the default endpoint
   URL constructed from the `region`. It's typically used to connect to
   dynamodb-local.
 
-* `kinesis_endpoint` - (Optional) Use this to override the default endpoint URL
-  constructed from the `region`. It's typically used to connect to kinesalite.
+* `kinesis_endpoint` - (Optional) Use this to override the default endpoint
+  URL constructed from the `region`. It's typically used to connect to
+  kinesalite.
+
+Nested `endpoints` block supports the followings:
+
+* `iam` - (Optional) Use this to override the default endpoint
+  URL constructed from the `region`. It's typically used to connect to
+  custom iam endpoints.
+
+* `ec2` - (Optional) Use this to override the default endpoint
+  URL constructed from the `region`. It's typically used to connect to
+  custom ec2 endpoints.
+
+* `elb` - (Optional) Use this to override the default endpoint
+  URL constructed from the `region`. It's typically used to connect to
+  custom elb endpoints.
+
+## Getting the Account ID
+
+If you use either `allowed_account_ids` or `forbidden_account_ids`,
+Terraform uses several approaches to get the actual account ID
+in order to compare it with allowed/forbidden ones.
+
+Approaches differ per auth providers:
+
+ * EC2 instance w/ IAM Instance Profile - [Metadata API](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html)
+    is always used
+ * All other providers (ENV vars, shared creds file, ...)
+    will try two approaches in the following order
+   * `iam:GetUser` - typically useful for IAM Users. It also means
+      that each user needs to be privileged to call `iam:GetUser` for themselves.
+   * `iam:ListRoles` - this is specifically useful for IdP-federated profiles
+      which cannot use `iam:GetUser`. It also means that each federated user
+      need to be _assuming_ an IAM role which allows `iam:ListRoles`.
+      There is currently no better clean way to get account ID
+      out of the API when using federated account unfortunately.
