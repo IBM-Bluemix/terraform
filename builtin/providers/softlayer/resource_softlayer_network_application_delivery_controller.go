@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/TheWeatherCompany/softlayer-go/services"
+//	"github.com/TheWeatherCompany/softlayer-go/services"
 	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 	"github.com/hashicorp/terraform/helper/schema"
 	"strings"
@@ -106,21 +106,16 @@ func resourceSoftLayerNetworkApplicationDeliveryControllerRead(d *schema.Resourc
 	if err != nil {
 		return fmt.Errorf("Not a valid ID, must be an integer: %s", err)
 	}
-	result, err := client.GetObject(id)
+	getObjectResult, err := client.GetObject(id)
 	if err != nil {
 		return fmt.Errorf("Error retrieving network application delivery controller: %s", err)
 	}
 
-	d.Set("name", result.Name)
-	d.Set("type", result.Type)
-	if result.Datacenter != nil {
-		d.Set("location", result.Datacenter.Name)
+	d.Set("name", getObjectResult.Name)
+	d.Set("type", getObjectResult.Type)
+	if getObjectResult.Datacenter != nil {
+		d.Set("location", getObjectResult.Datacenter.Name)
 	}
-
-	version, speed, plan := getVersionSpeedPlanFromDescription(result.Description)
-	d.Set("speed", speed)
-	d.Set("version", version)
-	d.Set("plan", plan)
 
 	return nil
 }
@@ -132,7 +127,7 @@ func resourceSoftLayerNetworkApplicationDeliveryControllerRead(d *schema.Resourc
 // 10MBPS -> speed 10
 // STANDARD -> plan STANDARD
 func getVersionSpeedPlanFromDescription(description string) (string, int, string) {
-	strs := strings.Split(description, services.DELIMITER)
+	strs := strings.Split(description, " ")
 	version := strings.Join([]string{strs[3], strs[4]}, ".")
 	speedString := strings.Trim(strs[4], "MBPS")
 	speed, _ := strconv.Atoi(speedString)

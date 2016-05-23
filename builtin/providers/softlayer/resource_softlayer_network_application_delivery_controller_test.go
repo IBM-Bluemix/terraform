@@ -8,6 +8,7 @@ import (
 	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	// "time"
 )
 
 func TestAccSoftLayerNetworkApplicationDeliveryController_Basic(t *testing.T) {
