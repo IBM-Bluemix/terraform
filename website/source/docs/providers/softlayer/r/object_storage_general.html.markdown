@@ -1,12 +1,12 @@
 ---
 layout: "softlayer"
-page_title: "SoftLayer: object storage"
-sidebar_current: "docs-softlayer-resource-softlayer-object-storage-container"
+page_title: "SoftLayer: Object Storage"
+sidebar_current: "docs-softlayer-object-storage-resources"
 description: |-
-  Provides Softlayer Object Storage Container
+  Provides Softlayer Object Storage Resources
 ---
 
-# softlayer_object_storage_container
+# Softlayer Object Storage
 
 For managing SoftLayer object storage containers and objects, please see
 the [Swift provider](/docs/providers/swift/index.html), since SoftLayer's object storage is an implementation of Swift object storage.
