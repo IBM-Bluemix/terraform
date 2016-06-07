@@ -1,15 +1,15 @@
 package client
 
 import (
-	"errors"
 	"bytes"
+	"errors"
 	"fmt"
+	services "github.com/TheWeatherCompany/softlayer-go/services"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
-	services "github.com/TheWeatherCompany/softlayer-go/services"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 const (
@@ -19,7 +19,7 @@ const (
 
 type SoftLayerClient struct {
 	username string
- 	apiKey   string
+	apiKey   string
 
 	HTTPClient *http.Client
 
@@ -64,6 +64,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_
 	}
 
 	return slService.(softlayer.SoftLayer_Account_Service), nil
+}
+
+func (slc *SoftLayerClient) GetSoftLayer_User_Customer_Service() (softlayer.SoftLayer_User_Customer_Service, error) {
+	slService, err := slc.GetService("SoftLayer_User_Customer")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_User_Customer_Service), nil
 }
 
 func (slc *SoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
@@ -192,6 +201,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Network_Application_Delivery_Controller
 	return slService.(softlayer.SoftLayer_Network_Application_Delivery_Controller_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Security_Certificate_Service() (softlayer.SoftLayer_Security_Certificate_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Security_Certificate")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Security_Certificate_Service), nil
+}
+
 //Public methods
 
 func (slc *SoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
@@ -241,6 +259,7 @@ func (slc *SoftLayerClient) DoRawHttpRequest(path string, requestType string, re
 
 func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(slc)
+	slc.softLayerServices["SoftLayer_User_Customer"] = services.NewSoftLayer_User_Customer_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Disk_Image"] = services.NewSoftLayer_Virtual_Disk_Image_Service(slc)
 	slc.softLayerServices["SoftLayer_Security_Ssh_Key"] = services.NewSoftLayer_Security_Ssh_Key_Service(slc)
@@ -255,6 +274,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(slc)
 	slc.softLayerServices["SoftLayer_Network_Application_Delivery_Controller_Service"] = services.NewSoftLayer_Network_Application_Delivery_Controller_Service(slc)
+	slc.softLayerServices["SoftLayer_Security_Certificate"] = services.NewSoftLayer_Security_Certificate_Service(slc)
 }
 
 func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {

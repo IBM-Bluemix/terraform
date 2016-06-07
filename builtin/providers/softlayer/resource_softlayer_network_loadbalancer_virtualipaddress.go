@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"log"
 
+	"bytes"
 	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	"github.com/TheWeatherCompany/softlayer-go/services"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
 )
 
 func resourceSoftLayerNetworkLoadBalancerVirtualIpAddress() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceSoftLayerNetworkLoadBalancerVirtualIpAddressCreate,
 		Read:   resourceSoftLayerNetworkLoadBalancerVirtualIpAddressRead,
+		Update: resourceSoftLayerNetworkLoadBalancerVirtualIpAddressUpdate,
 		Delete: resourceSoftLayerNetworkLoadBalancerVirtualIpAddressDelete,
 		Exists: resourceSoftLayerNetworkLoadBalancerVirtualIpAddressExists,
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
 			"nad_controller_id": &schema.Schema{
 				Type:     schema.TypeInt,
 				Required: true,
@@ -29,19 +28,13 @@ func resourceSoftLayerNetworkLoadBalancerVirtualIpAddress() *schema.Resource {
 
 			"connection_limit": &schema.Schema{
 				Type:     schema.TypeInt,
-				Optional: true,
-				ForceNew: true,
+				Computed: true,
 			},
 
 			"load_balancing_method": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-			},
-
-			"load_labancing_method_name": &schema.Schema{
-				Type:     schema.TypeInt,
-				Computed: true,
 			},
 
 			"modify_date": &schema.Schema{
@@ -57,16 +50,9 @@ func resourceSoftLayerNetworkLoadBalancerVirtualIpAddress() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"notes": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-			},
-
 			"security_certificate_id": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
-				ForceNew: true,
 			},
 
 			"source_port": &schema.Schema{
@@ -102,7 +88,6 @@ func resourceSoftLayerNetworkLoadBalancerVirtualIpAddressCreate(d *schema.Resour
 		ConnectionLimit:       d.Get("connection_limit").(int),
 		LoadBalancingMethod:   d.Get("load_balancing_method").(string),
 		Name:                  d.Get("name").(string),
-		Notes:                 d.Get("notes").(string),
 		SourcePort:            d.Get("source_port").(int),
 		Type:                  d.Get("type").(string),
 		VirtualIpAddress:      d.Get("virtual_ip_address").(string),
@@ -138,14 +123,18 @@ func resourceSoftLayerNetworkLoadBalancerVirtualIpAddressRead(d *schema.Resource
 		return fmt.Errorf("Error getting Virtual Ip Address: %s", err)
 	}
 
-	d.SetId(vip.Name)
+	var vipId bytes.Buffer
+	vipId.WriteString(vip.Name)
+	vipId.WriteString(services.ID_DELIMITER)
+	vipId.WriteString(strconv.Itoa(nadcId))
+
+	d.SetId(vipId.String())
 	d.Set("nad_controller_id", nadcId)
 	d.Set("load_balancing_method", vip.LoadBalancingMethod)
-	d.Set("load_labancing_method_name", vip.LoadBalancingMethodFullName)
+	d.Set("load_balancing_method_name", vip.LoadBalancingMethodFullName)
 	d.Set("modify_date", vip.ModifyDate)
 	d.Set("name", vip.Name)
 	d.Set("connection_limit", vip.ConnectionLimit)
-	d.Set("notes", vip.Notes)
 	d.Set("security_certificate_id", vip.SecurityCertificateId)
 	d.Set("source_port", vip.SourcePort)
 	d.Set("type", vip.Type)
@@ -167,10 +156,6 @@ func resourceSoftLayerNetworkLoadBalancerVirtualIpAddressUpdate(d *schema.Resour
 
 	if d.HasChange("load_balancing_method") {
 		template.LoadBalancingMethod = d.Get("load_balancing_method").(string)
-	}
-
-	if d.HasChange("notes") {
-		template.Notes = d.Get("notes").(string)
 	}
 
 	if d.HasChange("security_certificate_id") {

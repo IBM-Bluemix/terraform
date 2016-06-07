@@ -17,7 +17,6 @@ func resourceSoftLayerNetworkApplicationDeliveryController() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceSoftLayerNetworkApplicationDeliveryControllerCreate,
 		Read:   resourceSoftLayerNetworkApplicationDeliveryControllerRead,
-		Update: resourceSoftLayerNetworkApplicationDeliveryControllerUpdate,
 		Delete: resourceSoftLayerNetworkApplicationDeliveryControllerDelete,
 		Exists: resourceSoftLayerNetworkApplicationDeliveryControllerExists,
 
@@ -29,32 +28,37 @@ func resourceSoftLayerNetworkApplicationDeliveryController() *schema.Resource {
 
 			"type": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
 			},
 
 			"datacenter": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"speed": &schema.Schema{
 				Type:     schema.TypeInt,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"version": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"plan": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"ip_count": &schema.Schema{
 				Type:     schema.TypeInt,
 				Required: true,
+				ForceNew: true,
 			},
 		},
 	}
@@ -66,7 +70,7 @@ func resourceSoftLayerNetworkApplicationDeliveryControllerCreate(d *schema.Resou
 		return fmt.Errorf("The client is nil.")
 	}
 
-	nadcType := d.Get("type").(string)
+	nadcType := NETSCALER_VPX_TYPE
 
 	switch nadcType {
 	default:
@@ -115,11 +119,6 @@ func resourceSoftLayerNetworkApplicationDeliveryControllerRead(d *schema.Resourc
 	}
 
 	return nil
-}
-
-func resourceSoftLayerNetworkApplicationDeliveryControllerUpdate(d *schema.ResourceData, meta interface{}) error {
-	//	client := meta.(*Client).networkApplicationDeliveryControllerService
-	return fmt.Errorf("Update is not supported yet")
 }
 
 func resourceSoftLayerNetworkApplicationDeliveryControllerDelete(d *schema.ResourceData, meta interface{}) error {

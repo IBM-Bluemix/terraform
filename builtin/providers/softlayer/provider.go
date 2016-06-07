@@ -29,6 +29,8 @@ func Provider() terraform.ResourceProvider {
 			"softlayer_dns_domain":                              resourceSoftLayerDnsDomain(),
 			"softlayer_network_application_delivery_controller": resourceSoftLayerNetworkApplicationDeliveryController(),
 			"softlayer_network_loadbalancer_virtualipaddress":   resourceSoftLayerNetworkLoadBalancerVirtualIpAddress(),
+			"softlayer_network_loadbalancer_service":            resourceSoftLayerNetworkLoadBalancerService(),
+			"softlayer_security_certificate":                    resourceSoftLayerSecurityCertificate(),
 		},
 
 		ConfigureFunc: providerConfigure,

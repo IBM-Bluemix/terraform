@@ -22,8 +22,6 @@ func TestAccSoftLayerNetworkApplicationDeliveryController_Basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSoftLayerNetworkApplicationDeliveryControllerExists("softlayer_network_application_delivery_controller.testacc_foobar_nadc", &nadc),
 					resource.TestCheckResourceAttr(
-						"softlayer_network_application_delivery_controller.testacc_foobar_nadc", "type", "Netscaler VPX"),
-					resource.TestCheckResourceAttr(
 						"softlayer_network_application_delivery_controller.testacc_foobar_nadc", "datacenter", "DALLAS06"),
 					resource.TestCheckResourceAttr(
 						"softlayer_network_application_delivery_controller.testacc_foobar_nadc", "speed", "10"),
@@ -70,7 +68,6 @@ func testAccCheckSoftLayerNetworkApplicationDeliveryControllerExists(n string, n
 
 const testAccCheckSoftLayerNetworkApplicationDeliveryControllerConfig_basic = `
 resource "softlayer_network_application_delivery_controller" "testacc_foobar_nadc" {
-    type = "Netscaler VPX"
     datacenter = "DALLAS06"
     speed = 10
     version = "10.1"
