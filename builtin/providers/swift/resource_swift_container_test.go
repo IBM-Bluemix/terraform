@@ -92,6 +92,6 @@ const testAccCheckSwiftContainerConfig_basic = `
 resource "swift_container" "terraform-acceptance-test-1" {
     name = "terraform-swift-test"
     read_access = ["foo_user"]
-    write_access = ["bar_user]
+    write_access = ["bar_user"]
 }
 `

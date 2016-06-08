@@ -30,10 +30,12 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func TestProvider_Configure(t *testing.T) {
-	p := Provider()
+	//p := Provider()
+	Provider()
 
 	raw := map[string]interface{}{} // empty config. defaults from environment
-	rawConfig, err := config.NewRawConfig(raw)
+	//rawConfig, err := config.NewRawConfig(raw)
+	_, err := config.NewRawConfig(raw)
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
