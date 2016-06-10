@@ -186,6 +186,36 @@
 			"revision": "0290933f5e8afd933f2823fce32bf2847e6ea603"
 		},
 		{
+			"checksumSHA1": "HsIGOQjx5ER7CqsHbLdk3f0HHEg=",
+			"path": "github.com/TheWeatherCompany/softlayer-go/client",
+			"revision": "36c2a33266d9a2dacb12c5772a500dc7fa3e3b6a",
+			"revisionTime": "2016-06-08T22:42:16Z"
+		},
+		{
+			"checksumSHA1": "YKbmwVbAebRVC0NGPAnb1q8Y0xs=",
+			"path": "github.com/TheWeatherCompany/softlayer-go/common",
+			"revision": "36c2a33266d9a2dacb12c5772a500dc7fa3e3b6a",
+			"revisionTime": "2016-06-08T22:42:16Z"
+		},
+		{
+			"checksumSHA1": "G6TmL65ynDX0RK76LmzgELGghlw=",
+			"path": "github.com/TheWeatherCompany/softlayer-go/data_types",
+			"revision": "36c2a33266d9a2dacb12c5772a500dc7fa3e3b6a",
+			"revisionTime": "2016-06-08T22:42:16Z"
+		},
+		{
+			"checksumSHA1": "XOsa+MRvn1jjhC+l/a3ok88mnj0=",
+			"path": "github.com/TheWeatherCompany/softlayer-go/services",
+			"revision": "36c2a33266d9a2dacb12c5772a500dc7fa3e3b6a",
+			"revisionTime": "2016-06-08T22:42:16Z"
+		},
+		{
+			"checksumSHA1": "RM4VSyk7+q65xFX9WFqk1nhoSMI=",
+			"path": "github.com/TheWeatherCompany/softlayer-go/softlayer",
+			"revision": "36c2a33266d9a2dacb12c5772a500dc7fa3e3b6a",
+			"revisionTime": "2016-06-08T22:42:16Z"
+		},
+		{
 			"path": "github.com/Unknwon/com",
 			"revision": "28b053d5a2923b87ce8c5a08f3af779894a72758"
 		},
@@ -997,31 +1027,6 @@
 		{
 			"path": "github.com/mattn/go-isatty",
 			"revision": "56b76bdf51f7708750eac80fa38b952bb9f32639"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/client",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/common",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/data_types",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/services",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/softlayer",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
 		},
 		{
 			"path": "github.com/mitchellh/cli",
