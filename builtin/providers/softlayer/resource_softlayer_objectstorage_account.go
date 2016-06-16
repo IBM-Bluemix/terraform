@@ -66,7 +66,7 @@ func resourceSoftLayerObjectStorageAccountCreate(d *schema.ResourceData, meta in
 
 		// Get accountName using filter on hub network storage
 		objectStorageAccounts, err = accountService.GetHubNetworkStorageByFilter(
-			fmt.Sprintf(`{"hubNetworkStorage":{"billingItem":{"id":{"operation":%d}}}}`, billingOrderItem.BillingItem.Id),
+			fmt.Sprintf(`{"billingItem":{"id":{"operation":%d}}}`, billingOrderItem.BillingItem.Id),
 		)
 		if err != nil {
 			return fmt.Errorf("resource_softlayer_objectstorage_account: Error on retrieving new: %s", err)
@@ -118,7 +118,8 @@ func resourceSoftLayerObjectStorageAccountRead(d *schema.ResourceData, meta inte
 	accountName := d.Id()
 
 	// Check if an object storage account exists
-	objectStorageAccounts, err := accountService.GetHubNetworkStorage()
+	objectStorageAccounts, err := accountService.GetHubNetworkStorageByFilter(
+		fmt.Sprintf(`{"username":{"operation":"%s"}}`, accountName))
 	if err != nil {
 		return fmt.Errorf("resource_softlayer_objectstorage_account: Error on Read: %s", err)
 	}
