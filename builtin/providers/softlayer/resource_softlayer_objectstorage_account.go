@@ -90,7 +90,7 @@ func WaitForOrderCompletion(receipt *datatypes.SoftLayer_Container_Product_Order
 			billingItemService := meta.(*Client).billingItemService
 			var err error
 			var completed bool
-			completed, billingOrderItem, err = billingItemService.CheckOrderStatus(receipt, "COMPLETED")
+			completed, billingOrderItem, err = billingItemService.CheckOrderStatus(*receipt, "COMPLETED")
 			if err != nil {
 				return nil, "", err
 			}
