@@ -20,7 +20,7 @@ func resourceSoftLayerObjectStorageAccount() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Type:     schema.TypeInt,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"name": &schema.Schema{
