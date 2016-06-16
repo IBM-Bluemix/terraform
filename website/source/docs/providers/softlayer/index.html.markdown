@@ -17,10 +17,6 @@ Use the navigation to the left to read about the available resources.
 It is ready to be used but many features are still being added. If there
 is a SoftLayer feature missing, please report it in the GitHub repo.</div>
 
-<div class="alert alert-block alert-info">
-<strong>Note:</strong> For managing SoftLayer object storage containers and objects, please see
-the Swift provider, since SoftLayer's object storage is an implementation of Swift object storage.</div>
-
 ## Example Usage
 
 Here is an example that will setup the following:
