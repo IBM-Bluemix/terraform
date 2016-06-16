@@ -186,6 +186,41 @@
 			"revision": "0290933f5e8afd933f2823fce32bf2847e6ea603"
 		},
 		{
+			"checksumSHA1": "k58BAExO0PSsauJFpTR4Y2mw0jU=",
+			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/client",
+			"path": "github.com/TheWeatherCompany/softlayer-go/client",
+			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
+			"revisionTime": "2016-06-16T16:38:45Z"
+		},
+		{
+			"checksumSHA1": "YKbmwVbAebRVC0NGPAnb1q8Y0xs=",
+			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/common",
+			"path": "github.com/TheWeatherCompany/softlayer-go/common",
+			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
+			"revisionTime": "2016-06-16T16:38:45Z"
+		},
+		{
+			"checksumSHA1": "Zf79uU/6t+6Yac3Hdg8XKlGoGsE=",
+			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/data_types",
+			"path": "github.com/TheWeatherCompany/softlayer-go/data_types",
+			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
+			"revisionTime": "2016-06-16T16:38:45Z"
+		},
+		{
+			"checksumSHA1": "pb0LX90cN+tbm2CYevw2JyUWN6w=",
+			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/services",
+			"path": "github.com/TheWeatherCompany/softlayer-go/services",
+			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
+			"revisionTime": "2016-06-16T16:38:45Z"
+		},
+		{
+			"checksumSHA1": "52afg42LNdeGE96XypYsmWsIazU=",
+			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/softlayer",
+			"path": "github.com/TheWeatherCompany/softlayer-go/softlayer",
+			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
+			"revisionTime": "2016-06-16T16:38:45Z"
+		},
+		{
 			"path": "github.com/Unknwon/com",
 			"revision": "28b053d5a2923b87ce8c5a08f3af779894a72758"
 		},
