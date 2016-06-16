@@ -23,6 +23,10 @@ func resourceSoftLayerObjectStorageAccount() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
