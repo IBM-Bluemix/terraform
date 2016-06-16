@@ -60,6 +60,7 @@ func Funcs() map[string]ast.Function {
 		"coalesce":     interpolationFuncCoalesce(),
 		"compact":      interpolationFuncCompact(),
 		"concat":       interpolationFuncConcat(),
+		"distinct":     interpolationFuncDistinct(),
 		"element":      interpolationFuncElement(),
 		"file":         interpolationFuncFile(),
 		"format":       interpolationFuncFormat(),
@@ -75,6 +76,7 @@ func Funcs() map[string]ast.Function {
 		"sha1":         interpolationFuncSha1(),
 		"sha256":       interpolationFuncSha256(),
 		"signum":       interpolationFuncSignum(),
+		"sort":         interpolationFuncSort(),
 		"split":        interpolationFuncSplit(),
 		"trimspace":    interpolationFuncTrimSpace(),
 		"upper":        interpolationFuncUpper(),
@@ -239,12 +241,18 @@ func interpolationFuncConcat() ast.Function {
 				// Otherwise variables
 				if argument, ok := arg.([]ast.Variable); ok {
 					for _, element := range argument {
-						finalListElements = append(finalListElements, element.Value.(string))
+						t := element.Type
+						switch t {
+						case ast.TypeString:
+							finalListElements = append(finalListElements, element.Value.(string))
+						default:
+							return nil, fmt.Errorf("concat() does not support lists of %s", t.Printable())
+						}
 					}
 					continue
 				}
 
-				return nil, fmt.Errorf("arguments to concat() must be a string or list")
+				return nil, fmt.Errorf("arguments to concat() must be a string or list of strings")
 			}
 
 			return stringSliceToVariableValue(finalListElements), nil
@@ -373,6 +381,42 @@ func interpolationFuncIndex() ast.Function {
 			return nil, fmt.Errorf("Could not find '%s' in '%s'", needle, haystack)
 		},
 	}
+}
+
+// interpolationFuncDistinct implements the "distinct" function that
+// removes duplicate elements from a list.
+func interpolationFuncDistinct() ast.Function {
+	return ast.Function{
+		ArgTypes:     []ast.Type{ast.TypeList},
+		ReturnType:   ast.TypeList,
+		Variadic:     true,
+		VariadicType: ast.TypeList,
+		Callback: func(args []interface{}) (interface{}, error) {
+			var list []string
+
+			if len(args) != 1 {
+				return nil, fmt.Errorf("distinct() excepts only one argument.")
+			}
+
+			if argument, ok := args[0].([]ast.Variable); ok {
+				for _, element := range argument {
+					list = appendIfMissing(list, element.Value.(string))
+				}
+			}
+
+			return stringSliceToVariableValue(list), nil
+		},
+	}
+}
+
+// helper function to add an element to a list, if it does not already exsit
+func appendIfMissing(slice []string, element string) []string {
+	for _, ele := range slice {
+		if ele == element {
+			return slice
+		}
+	}
+	return append(slice, element)
 }
 
 // interpolationFuncJoin implements the "join" function that allows
@@ -529,6 +573,34 @@ func interpolationFuncSignum() ast.Function {
 	}
 }
 
+// interpolationFuncSort sorts a list of a strings lexographically
+func interpolationFuncSort() ast.Function {
+	return ast.Function{
+		ArgTypes:   []ast.Type{ast.TypeList},
+		ReturnType: ast.TypeList,
+		Variadic:   false,
+		Callback: func(args []interface{}) (interface{}, error) {
+			inputList := args[0].([]ast.Variable)
+
+			// Ensure that all the list members are strings and
+			// create a string slice from them
+			members := make([]string, len(inputList))
+			for i, val := range inputList {
+				if val.Type != ast.TypeString {
+					return nil, fmt.Errorf(
+						"sort() may only be used with lists of strings - %s at index %d",
+						val.Type.String(), i)
+				}
+
+				members[i] = val.Value.(string)
+			}
+
+			sort.Strings(members)
+			return stringSliceToVariableValue(members), nil
+		},
+	}
+}
+
 // interpolationFuncSplit implements the "split" function that allows
 // strings to split into multi-variable values
 func interpolationFuncSplit() ast.Function {
@@ -548,17 +620,32 @@ func interpolationFuncSplit() ast.Function {
 // dynamic lookups of map types within a Terraform configuration.
 func interpolationFuncLookup(vs map[string]ast.Variable) ast.Function {
 	return ast.Function{
-		ArgTypes:   []ast.Type{ast.TypeMap, ast.TypeString},
-		ReturnType: ast.TypeString,
+		ArgTypes:     []ast.Type{ast.TypeMap, ast.TypeString},
+		ReturnType:   ast.TypeString,
+		Variadic:     true,
+		VariadicType: ast.TypeString,
 		Callback: func(args []interface{}) (interface{}, error) {
+			defaultValue := ""
+			defaultValueSet := false
+			if len(args) > 2 {
+				defaultValue = args[2].(string)
+				defaultValueSet = true
+			}
+			if len(args) > 3 {
+				return "", fmt.Errorf("lookup() takes no more than three arguments")
+			}
 			index := args[1].(string)
 			mapVar := args[0].(map[string]ast.Variable)
 
 			v, ok := mapVar[index]
 			if !ok {
-				return "", fmt.Errorf(
-					"lookup failed to find '%s'",
-					args[1].(string))
+				if defaultValueSet {
+					return defaultValue, nil
+				} else {
+					return "", fmt.Errorf(
+						"lookup failed to find '%s'",
+						args[1].(string))
+				}
 			}
 			if v.Type != ast.TypeString {
 				return "", fmt.Errorf(

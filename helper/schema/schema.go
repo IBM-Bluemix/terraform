@@ -19,10 +19,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/mitchellh/mapstructure"
-	"log"
 )
 
 // Schema is used to describe the structure of a value.
@@ -147,6 +145,12 @@ type Schema struct {
 	//
 	// ValidateFunc currently only works for primitive types.
 	ValidateFunc SchemaValidateFunc
+
+	// Sensitive ensures that the attribute's value does not get displayed in
+	// logs or regular output. It should be used for passwords or other
+	// secret fields. Futrure versions of Terraform may encrypt these
+	// values.
+	Sensitive bool
 }
 
 // SchemaDefaultFunc is a function called to return a default value for
@@ -279,6 +283,11 @@ func (s *Schema) finalizeDiff(
 	if s.ForceNew {
 		// Force new, set it to true in the diff
 		d.RequiresNew = true
+	}
+
+	if s.Sensitive {
+		// Set the Sensitive flag so output is hidden in the UI
+		d.Sensitive = true
 	}
 
 	return d
@@ -751,8 +760,8 @@ func (m schemaMap) diffMap(
 	stateExists := o != nil
 
 	// Delete any count values, since we don't use those
-	delete(configMap, "#")
-	delete(stateMap, "#")
+	delete(configMap, "%")
+	delete(stateMap, "%")
 
 	// Check if the number of elements has changed.
 	oldLen, newLen := len(stateMap), len(configMap)
@@ -786,7 +795,7 @@ func (m schemaMap) diffMap(
 			oldStr = ""
 		}
 
-		diff.Attributes[k+".#"] = countSchema.finalizeDiff(
+		diff.Attributes[k+".%"] = countSchema.finalizeDiff(
 			&terraform.ResourceAttrDiff{
 				Old: oldStr,
 				New: newStr,
@@ -1134,8 +1143,6 @@ func (m schemaMap) validateMap(
 		// If raw and reified are equal, this is a string and should
 		// be rejected.
 		reified, reifiedOk := c.Get(k)
-		log.Printf("[jen20] reified: %s", spew.Sdump(reified))
-		log.Printf("[jen20]     raw: %s", spew.Sdump(raw))
 		if reifiedOk && raw == reified && !c.IsComputed(k) {
 			return nil, []error{fmt.Errorf("%s: should be a map", k)}
 		}
