@@ -1048,31 +1048,6 @@
 			"revision": "56b76bdf51f7708750eac80fa38b952bb9f32639"
 		},
 		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/client",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/common",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/data_types",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/services",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
-			"comment": "v0.6.0",
-			"path": "github.com/maximilien/softlayer-go/softlayer",
-			"revision": "85659debe44fab5792fc92cf755c04b115b9dc19"
-		},
-		{
 			"path": "github.com/mitchellh/cli",
 			"revision": "83f97d41cf100ee5f33944a8815c167d5e4aa272"
 		},
