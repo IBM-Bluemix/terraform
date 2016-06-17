@@ -187,38 +187,33 @@
 		},
 		{
 			"checksumSHA1": "k58BAExO0PSsauJFpTR4Y2mw0jU=",
-			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/client",
 			"path": "github.com/TheWeatherCompany/softlayer-go/client",
-			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
-			"revisionTime": "2016-06-16T16:38:45Z"
+			"revision": "3c1623802c6be4799862dc7fb780b4e60e1b3e4a",
+			"revisionTime": "2016-06-16T23:16:48Z"
 		},
 		{
 			"checksumSHA1": "YKbmwVbAebRVC0NGPAnb1q8Y0xs=",
-			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/common",
 			"path": "github.com/TheWeatherCompany/softlayer-go/common",
-			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
-			"revisionTime": "2016-06-16T16:38:45Z"
+			"revision": "3c1623802c6be4799862dc7fb780b4e60e1b3e4a",
+			"revisionTime": "2016-06-16T23:16:48Z"
 		},
 		{
 			"checksumSHA1": "Zf79uU/6t+6Yac3Hdg8XKlGoGsE=",
-			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/data_types",
 			"path": "github.com/TheWeatherCompany/softlayer-go/data_types",
-			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
-			"revisionTime": "2016-06-16T16:38:45Z"
+			"revision": "3c1623802c6be4799862dc7fb780b4e60e1b3e4a",
+			"revisionTime": "2016-06-16T23:16:48Z"
 		},
 		{
-			"checksumSHA1": "pb0LX90cN+tbm2CYevw2JyUWN6w=",
-			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/services",
+			"checksumSHA1": "kleivNOrErJAXj9ZfUUohWzTMyE=",
 			"path": "github.com/TheWeatherCompany/softlayer-go/services",
-			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
-			"revisionTime": "2016-06-16T16:38:45Z"
+			"revision": "3c1623802c6be4799862dc7fb780b4e60e1b3e4a",
+			"revisionTime": "2016-06-16T23:16:48Z"
 		},
 		{
 			"checksumSHA1": "52afg42LNdeGE96XypYsmWsIazU=",
-			"origin": "github.com/hashicorp/terraform/vendor/github.com/TheWeatherCompany/softlayer-go/softlayer",
 			"path": "github.com/TheWeatherCompany/softlayer-go/softlayer",
-			"revision": "bb31e22dcf2ba3fda88b0cd18d7fa7e0b7e2c69e",
-			"revisionTime": "2016-06-16T16:38:45Z"
+			"revision": "3c1623802c6be4799862dc7fb780b4e60e1b3e4a",
+			"revisionTime": "2016-06-16T23:16:48Z"
 		},
 		{
 			"path": "github.com/Unknwon/com",
