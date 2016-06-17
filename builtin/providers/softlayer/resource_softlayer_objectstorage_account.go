@@ -89,24 +89,24 @@ func WaitForOrderCompletion(receipt *datatypes.SoftLayer_Container_Product_Order
 
 	stateConf := &resource.StateChangeConf{
 		Pending: []string{"", "in progress"},
-		Target:  []string{"completed"},
+		Target:  []string{"complete"},
 		Refresh: func() (interface{}, string, error) {
 			billingItemService := meta.(*Client).billingItemService
 			var err error
 			var completed bool
-			completed, billingOrderItem, err = billingItemService.CheckOrderStatus(*receipt, "COMPLETED")
+			completed, billingOrderItem, err = billingItemService.CheckOrderStatus(receipt, "COMPLETE")
 			if err != nil {
 				return nil, "", err
 			}
 			if completed {
-				return nil, "completed", nil
+				return billingOrderItem, "complete", nil
 			} else {
-				return nil, "in progress", nil
+				return billingOrderItem, "in progress", nil
 			}
 		},
 		Timeout:    10 * time.Minute,
 		Delay:      10 * time.Second,
-		MinTimeout: 3 * time.Second,
+		MinTimeout: 10 * time.Second,
 	}
 
 	_, err := stateConf.WaitForState()
