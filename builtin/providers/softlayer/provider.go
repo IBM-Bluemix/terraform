@@ -30,6 +30,8 @@ func Provider() terraform.ResourceProvider {
 			"softlayer_lb_vpx":            resourceSoftLayerNetworkApplicationDeliveryController(),
 			"softlayer_lb_vpx_vip":        resourceSoftLayerNetworkLoadBalancerVirtualIpAddress(),
 			"softlayer_lb_vpx_service":    resourceSoftLayerNetworkLoadBalancerService(),
+			"softlayer_provisioning_hook": resourceSoftLayerProvisioningHook(),
+			
 		},
 
 		ConfigureFunc: providerConfigure,
