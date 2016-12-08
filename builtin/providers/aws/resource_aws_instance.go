@@ -41,6 +41,7 @@ func resourceAwsInstance() *schema.Resource {
 			"associate_public_ip_address": &schema.Schema{
 				Type:     schema.TypeBool,
 				ForceNew: true,
+				Computed: true,
 				Optional: true,
 			},
 
@@ -98,8 +99,7 @@ func resourceAwsInstance() *schema.Resource {
 				StateFunc: func(v interface{}) string {
 					switch v.(type) {
 					case string:
-						hash := sha1.Sum([]byte(v.(string)))
-						return hex.EncodeToString(hash[:])
+						return userDataHashSum(v.(string))
 					default:
 						return ""
 					}
@@ -268,7 +268,12 @@ func resourceAwsInstance() *schema.Resource {
 
 						"virtual_name": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
+						},
+
+						"no_device": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
 					},
 				},
@@ -277,6 +282,9 @@ func resourceAwsInstance() *schema.Resource {
 					m := v.(map[string]interface{})
 					buf.WriteString(fmt.Sprintf("%s-", m["device_name"].(string)))
 					buf.WriteString(fmt.Sprintf("%s-", m["virtual_name"].(string)))
+					if v, ok := m["no_device"].(bool); ok && v {
+						buf.WriteString(fmt.Sprintf("%t-", v))
+					}
 					return hashcode.String(buf.String())
 				},
 			},
@@ -499,6 +507,7 @@ func resourceAwsInstanceRead(d *schema.ResourceData, meta interface{}) error {
 			if *ni.Attachment.DeviceIndex == 0 {
 				d.Set("subnet_id", ni.SubnetId)
 				d.Set("network_interface_id", ni.NetworkInterfaceId)
+				d.Set("associate_public_ip_address", ni.Association != nil)
 			}
 		}
 	} else {
@@ -582,6 +591,18 @@ func resourceAwsInstanceRead(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 		d.Set("disable_api_termination", attr.DisableApiTermination.Value)
+	}
+	{
+		attr, err := conn.DescribeInstanceAttribute(&ec2.DescribeInstanceAttributeInput{
+			Attribute:  aws.String(ec2.InstanceAttributeNameUserData),
+			InstanceId: aws.String(d.Id()),
+		})
+		if err != nil {
+			return err
+		}
+		if attr.UserData.Value != nil {
+			d.Set("user_data", userDataHashSum(*attr.UserData.Value))
+		}
 	}
 
 	return nil
@@ -846,6 +867,11 @@ func fetchRootDeviceName(ami string, conn *ec2.EC2) (*string, error) {
 	image := res.Images[0]
 	rootDeviceName := image.RootDeviceName
 
+	// Instance store backed AMIs do not provide a root device name.
+	if *image.RootDeviceType == ec2.DeviceTypeInstanceStore {
+		return nil, nil
+	}
+
 	// Some AMIs have a RootDeviceName like "/dev/sda1" that does not appear as a
 	// DeviceName in the BlockDeviceMapping list (which will instead have
 	// something like "/dev/sda")
@@ -918,10 +944,21 @@ func readBlockDeviceMappingsFromConfig(
 		vL := v.(*schema.Set).List()
 		for _, v := range vL {
 			bd := v.(map[string]interface{})
-			blockDevices = append(blockDevices, &ec2.BlockDeviceMapping{
+			bdm := &ec2.BlockDeviceMapping{
 				DeviceName:  aws.String(bd["device_name"].(string)),
 				VirtualName: aws.String(bd["virtual_name"].(string)),
-			})
+			}
+			if v, ok := bd["no_device"].(bool); ok && v {
+				bdm.NoDevice = aws.String("")
+				// When NoDevice is true, just ignore VirtualName since it's not needed
+				bdm.VirtualName = nil
+			}
+
+			if bdm.NoDevice == nil && aws.StringValue(bdm.VirtualName) == "" {
+				return nil, fmt.Errorf("virtual_name cannot be empty when no_device is false or undefined.")
+			}
+
+			blockDevices = append(blockDevices, bdm)
 		}
 	}
 
@@ -1165,4 +1202,17 @@ func iamInstanceProfileArnToName(ip *ec2.IamInstanceProfile) string {
 	}
 	parts := strings.Split(*ip.Arn, "/")
 	return parts[len(parts)-1]
+}
+
+func userDataHashSum(user_data string) string {
+	// Check whether the user_data is not Base64 encoded.
+	// Always calculate hash of base64 decoded value since we
+	// check against double-encoding when setting it
+	v, base64DecodeError := base64.StdEncoding.DecodeString(user_data)
+	if base64DecodeError != nil {
+		v = []byte(user_data)
+	}
+
+	hash := sha1.Sum(v)
+	return hex.EncodeToString(hash[:])
 }

@@ -26,12 +26,7 @@ func resourceArmLoadBalancerNatPool() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"location": {
-				Type:      schema.TypeString,
-				Required:  true,
-				ForceNew:  true,
-				StateFunc: azureRMNormalizeLocation,
-			},
+			"location": locationSchema(),
 
 			"resource_group_name": {
 				Type:     schema.TypeString,
@@ -82,7 +77,11 @@ func resourceArmLoadBalancerNatPoolCreate(d *schema.ResourceData, meta interface
 	client := meta.(*ArmClient)
 	lbClient := client.loadBalancerClient
 
-	loadBalancer, exists, err := retrieveLoadBalancerById(d.Get("loadbalancer_id").(string), meta)
+	loadBalancerID := d.Get("loadbalancer_id").(string)
+	armMutexKV.Lock(loadBalancerID)
+	defer armMutexKV.Unlock(loadBalancerID)
+
+	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
 		return errwrap.Wrapf("Error Getting LoadBalancer By ID {{err}}", err)
 	}
@@ -92,18 +91,24 @@ func resourceArmLoadBalancerNatPoolCreate(d *schema.ResourceData, meta interface
 		return nil
 	}
 
-	_, _, exists = findLoadBalancerNatPoolByName(loadBalancer, d.Get("name").(string))
-	if exists {
-		return fmt.Errorf("A NAT Pool with name %q already exists.", d.Get("name").(string))
-	}
-
 	newNatPool, err := expandAzureRmLoadBalancerNatPool(d, loadBalancer)
 	if err != nil {
 		return errwrap.Wrapf("Error Expanding NAT Pool {{err}}", err)
 	}
 
-	natPools := append(*loadBalancer.Properties.InboundNatPools, *newNatPool)
-	loadBalancer.Properties.InboundNatPools = &natPools
+	natPools := append(*loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools, *newNatPool)
+
+	existingNatPool, existingNatPoolIndex, exists := findLoadBalancerNatPoolByName(loadBalancer, d.Get("name").(string))
+	if exists {
+		if d.Id() == *existingNatPool.ID {
+			// this probe is being updated remove old copy from the slice
+			natPools = append(natPools[:existingNatPoolIndex], natPools[existingNatPoolIndex+1:]...)
+		} else {
+			return fmt.Errorf("A NAT Pool with name %q already exists.", d.Get("name").(string))
+		}
+	}
+
+	loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools = &natPools
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
 		return errwrap.Wrapf("Error Getting LoadBalancer Name and Group: {{err}}", err)
@@ -122,7 +127,18 @@ func resourceArmLoadBalancerNatPoolCreate(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Cannot read LoadBalancer %s (resource group %s) ID", loadBalancerName, resGroup)
 	}
 
-	d.SetId(*read.ID)
+	var natPool_id string
+	for _, InboundNatPool := range *(*read.LoadBalancerPropertiesFormat).InboundNatPools {
+		if *InboundNatPool.Name == d.Get("name").(string) {
+			natPool_id = *InboundNatPool.ID
+		}
+	}
+
+	if natPool_id != "" {
+		d.SetId(natPool_id)
+	} else {
+		return fmt.Errorf("Cannot find created LoadBalancer NAT Pool ID %q", natPool_id)
+	}
 
 	log.Printf("[DEBUG] Waiting for LoadBalancer (%s) to become available", loadBalancerName)
 	stateConf := &resource.StateChangeConf{
@@ -139,7 +155,7 @@ func resourceArmLoadBalancerNatPoolCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceArmLoadBalancerNatPoolRead(d *schema.ResourceData, meta interface{}) error {
-	loadBalancer, exists, err := retrieveLoadBalancerById(d.Id(), meta)
+	loadBalancer, exists, err := retrieveLoadBalancerById(d.Get("loadbalancer_id").(string), meta)
 	if err != nil {
 		return errwrap.Wrapf("Error Getting LoadBalancer By ID {{err}}", err)
 	}
@@ -149,18 +165,18 @@ func resourceArmLoadBalancerNatPoolRead(d *schema.ResourceData, meta interface{}
 		return nil
 	}
 
-	configs := *loadBalancer.Properties.InboundNatPools
+	configs := *loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools
 	for _, config := range configs {
 		if *config.Name == d.Get("name").(string) {
 			d.Set("name", config.Name)
 
-			d.Set("protocol", config.Properties.Protocol)
-			d.Set("frontend_port_start", config.Properties.FrontendPortRangeStart)
-			d.Set("frontend_port_end", config.Properties.FrontendPortRangeEnd)
-			d.Set("backend_port", config.Properties.BackendPort)
+			d.Set("protocol", config.InboundNatPoolPropertiesFormat.Protocol)
+			d.Set("frontend_port_start", config.InboundNatPoolPropertiesFormat.FrontendPortRangeStart)
+			d.Set("frontend_port_end", config.InboundNatPoolPropertiesFormat.FrontendPortRangeEnd)
+			d.Set("backend_port", config.InboundNatPoolPropertiesFormat.BackendPort)
 
-			if config.Properties.FrontendIPConfiguration != nil {
-				d.Set("frontend_ip_configuration_id", config.Properties.FrontendIPConfiguration.ID)
+			if config.InboundNatPoolPropertiesFormat.FrontendIPConfiguration != nil {
+				d.Set("frontend_ip_configuration_id", config.InboundNatPoolPropertiesFormat.FrontendIPConfiguration.ID)
 			}
 
 			break
@@ -174,7 +190,11 @@ func resourceArmLoadBalancerNatPoolDelete(d *schema.ResourceData, meta interface
 	client := meta.(*ArmClient)
 	lbClient := client.loadBalancerClient
 
-	loadBalancer, exists, err := retrieveLoadBalancerById(d.Get("loadbalancer_id").(string), meta)
+	loadBalancerID := d.Get("loadbalancer_id").(string)
+	armMutexKV.Lock(loadBalancerID)
+	defer armMutexKV.Unlock(loadBalancerID)
+
+	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
 		return errwrap.Wrapf("Error Getting LoadBalancer By ID {{err}}", err)
 	}
@@ -188,9 +208,9 @@ func resourceArmLoadBalancerNatPoolDelete(d *schema.ResourceData, meta interface
 		return nil
 	}
 
-	oldNatPools := *loadBalancer.Properties.InboundNatPools
+	oldNatPools := *loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools
 	newNatPools := append(oldNatPools[:index], oldNatPools[index+1:]...)
-	loadBalancer.Properties.InboundNatPools = &newNatPools
+	loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools = &newNatPools
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
@@ -236,8 +256,8 @@ func expandAzureRmLoadBalancerNatPool(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	natPool := network.InboundNatPool{
-		Name:       azure.String(d.Get("name").(string)),
-		Properties: &properties,
+		Name: azure.String(d.Get("name").(string)),
+		InboundNatPoolPropertiesFormat: &properties,
 	}
 
 	return &natPool, nil
