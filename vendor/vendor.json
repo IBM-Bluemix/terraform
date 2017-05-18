@@ -389,80 +389,80 @@
 		{
 			"checksumSHA1": "uXoiqDVU3TZxsSfbeVKP60Gmtzo=",
 			"path": "github.com/IBM-Bluemix/bluemix-go",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "i79PeKQLMC6r4u4H7KDTNzMMbSo=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/api/account/accountv2",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "qAdyQ7iezAj/cMtoOm1NLYiTMF8=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
-			"checksumSHA1": "p42EedBTf9mwostBJjXX5QjJoHA=",
+			"checksumSHA1": "VVh76p4rla0q9g+dpZCJy2UTBnQ=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/api/k8scluster/k8sclusterv1",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "2dS1wigwpyW5ixKmyOPrUeLWW1c=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/authentication",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "YBML7SGPWwMvtuJFqSyTjtxvPYs=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/bmxerror",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "CnOI3bB+qKzMlr8p0XuxPalIKko=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/client",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "BqwaZM5Nf6lTTlcpkfucuT2ZYhk=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/endpoints",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "WSGgwampernftuHCz6XiOfFpcoM=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/helpers",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "GwQQNVaNODYWHyAUFw/PAvr+ePY=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/http",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "+YWMAtV5wQvcHDWzPmsZ1hRA1ic=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/rest",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "n5SnBu2teZIcsVylQbtHrqBExZY=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/session",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "WKFwS8jLgaJThltcgWFKjwyMlCI=",
 			"path": "github.com/IBM-Bluemix/bluemix-go/trace",
-			"revision": "424f9c5b3a7a5d8b209fe337493e1d0717bf3b46",
-			"revisionTime": "2017-05-12T19:21:55Z"
+			"revision": "1e641a5e64062d5dd53d750789caa269174d71c1",
+			"revisionTime": "2017-05-18T06:55:38Z"
 		},
 		{
 			"checksumSHA1": "B+GonfgNwOAJMEe0WUHQGATRtMA=",
