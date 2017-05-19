@@ -80,6 +80,7 @@ type ClientSession interface {
 	CloudFoundryServiceKeyClient() cfv2.ServiceKeys
 	CloudFoundryServiceOfferingClient() cfv2.ServiceOfferings
 	CloudFoundrySpaceClient() cfv2.Spaces
+	CloudFoundrySpaceQuotaClient() cfv2.SpaceQuotas
 
 	BluemixAcccountClient() accountv2.Accounts
 }
@@ -95,6 +96,7 @@ type clientSession struct {
 	cfOrgClient              cfv2.Organizations
 	cfServiceInstanceClient  cfv2.ServiceInstances
 	cfSpaceClient            cfv2.Spaces
+	cfSpaceQuotaClient       cfv2.SpaceQuotas
 	cfServicePlanClient      cfv2.ServicePlans
 	cfServiceKeysClient      cfv2.ServiceKeys
 	cfServiceOfferingsClient cfv2.ServiceOfferings
@@ -115,6 +117,11 @@ func (sess clientSession) CloudFoundryOrgClient() cfv2.Organizations {
 // CloudFoundrySpaceClient providers Cloud Foundary space APIs
 func (sess clientSession) CloudFoundrySpaceClient() cfv2.Spaces {
 	return sess.cfSpaceClient
+}
+
+// CloudFoundrySpaceQuotaClient providers Cloud Foundary space quota APIs
+func (sess clientSession) CloudFoundrySpaceQuotaClient() cfv2.SpaceQuotas {
+	return sess.cfSpaceQuotaClient
 }
 
 // CloudFoundryServiceInstanceClient providers Cloud Foundary service APIs
