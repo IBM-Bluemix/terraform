@@ -76,6 +76,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"ibmcloud_cf_service_instance":               resourceIBMCloudCfServiceInstance(),
 			"ibmcloud_cf_service_key":                    resourceIBMCloudCfServiceKey(),
+			"ibmcloud_cf_space":                          resourceIBMCloudCfSpace(),
 			"ibmcloud_cs_cluster":                        resourceIBMCloudArmadaCluster(),
 			"ibmcloud_cs_cluster_service_bind":           resourceIBMCloudClusterBindService(),
 			"ibmcloud_infra_bare_metal":                  resourceIBMCloudInfraBareMetal(),
