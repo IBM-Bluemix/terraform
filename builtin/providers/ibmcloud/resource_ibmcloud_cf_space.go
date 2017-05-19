@@ -26,12 +26,14 @@ func resourceIBMCloudCfSpace() *schema.Resource {
 				Description: "The org this space belongs to",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 
 			"space_quota": {
 				Description: "The name of the Space Quota Definition",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 		},
 	}

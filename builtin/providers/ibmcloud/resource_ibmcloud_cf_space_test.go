@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 
@@ -12,6 +13,8 @@ import (
 
 func TestAccIBMCloudCFSpace_Basic(t *testing.T) {
 	var conf cfv2.SpaceFields
+	name := fmt.Sprintf("terraform_%d", acctest.RandInt())
+	updatedName := fmt.Sprintf("terraform_updated_%d", acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -19,19 +22,19 @@ func TestAccIBMCloudCFSpace_Basic(t *testing.T) {
 		Steps: []resource.TestStep{
 
 			resource.TestStep{
-				Config: testAccCheckIBMCloudCFSpaceCreate(),
+				Config: testAccCheckIBMCloudCFSpaceCreate(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckIBMCloudCFSpaceExists("ibmcloud_cf_space.space", &conf),
-					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "org", "mytestorg"),
-					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "name", "TestSpace"),
+					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "org", cfOrganization),
+					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "name", name),
 				),
 			},
 
 			resource.TestStep{
-				Config: testAccCheckIBMCloudCFSpaceUpdate(),
+				Config: testAccCheckIBMCloudCFSpaceUpdate(updatedName),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "org", "mytestorg"),
-					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "name", "UpdatedTestSpace"),
+					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "org", cfOrganization),
+					resource.TestCheckResourceAttr("ibmcloud_cf_space.space", "name", updatedName),
 				),
 			},
 		},
@@ -59,22 +62,22 @@ func testAccCheckIBMCloudCFSpaceExists(n string, obj *cfv2.SpaceFields) resource
 	}
 }
 
-func testAccCheckIBMCloudCFSpaceCreate() string {
+func testAccCheckIBMCloudCFSpaceCreate(name string) string {
 	return fmt.Sprintf(`
 	
 resource "ibmcloud_cf_space" "space" {
-    org = "mytestorg"
-	name = "TestSpace"
-}`)
+    org = "%s"
+	name = "%s"
+}`, cfOrganization, name)
 
 }
 
-func testAccCheckIBMCloudCFSpaceUpdate() string {
+func testAccCheckIBMCloudCFSpaceUpdate(updatedName string) string {
 	return fmt.Sprintf(`
 	
 resource "ibmcloud_cf_space" "space" {
-    org = "mytestorg"
-	name = "UpdatedTestSpace"
-}`)
+    org = "%s"
+	name = "%s"
+}`, cfOrganization, updatedName)
 
 }
