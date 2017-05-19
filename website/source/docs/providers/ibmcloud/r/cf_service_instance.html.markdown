@@ -34,8 +34,8 @@ The following arguments are supported:
 
 * `name` - (Required, string) A descriptive name used to identify the service instance.
 * `space_guid` - (Required, string) The GUID of the space where you want to create the service. The values can be retrieved from data source `ibmcloud_cf_space`.
-* `service` - (Required, string) The name of the service offering.
-* `plan` - (Required, string) The name of the plan type supported by service.
+* `service` - (Required, string) The name of the service offering. Use the `bluemix service offerings` command to find the name and the plan of the service that you require. Installing Bluemix cli can be found [here](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started)
+* `plan` - (Required, string) The name of the plan type supported by service. Use the `bluemix service offerings` command to find the name and the plan of the service that you require.
 * `metadata` - (Optional, map) Valid JSON object containing service-specific configuration parameters.
 * `tags` - (Optional, list) User-provided tags.
 * `parameters` - (Optional, map) Arbitrary parameters to pass along to the service broker. Must be a JSON object.

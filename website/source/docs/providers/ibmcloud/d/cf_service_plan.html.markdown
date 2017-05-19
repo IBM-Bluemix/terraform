@@ -23,8 +23,8 @@ data "ibmcloud_cf_service_plan" "service_plan" {
 
 The following arguments are supported:
 
-* `service` - (Required) The name of the service.
-* `plan` - (Required) The name of the plan associated with the service.
+* `service` - (Required, string) The name of the service offering. Use the `bluemix service offerings` command to find the name and the plan of the service that you require. Installing Bluemix cli can be found [here](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started)
+* `plan` - (Required, string) The name of the plan type supported by service. Use the `bluemix service offering` command to find the name and the plan of the service that you require.
 
 ## Attributes Reference
 
