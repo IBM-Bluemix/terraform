@@ -1,157 +1,170 @@
 <% wrap_layout :inner do %>
-	<% content_for :sidebar do %>
-		<div class="docs-sidebar hidden-print affix-top" role="complementary">
-			<ul class="nav docs-sidenav">
-				<li<%= sidebar_current("docs-home") %>>
-				<a href="/docs/providers/index.html">All Providers</a>
-                </li>
-
-				<li<%= sidebar_current("docs-ibmcloud-index") %>>
-				<a href="/docs/providers/ibmcloud/index.html">IBM Cloud Provider</a>
-                </li>
-
-				<li<%= sidebar_current("docs-ibmcloud-datasource") %>>
-				<a href="#">Infrastructure Data Sources</a>
-                <ul class="nav nav-visible">
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cf-account") %>>
-					<a href="/docs/providers/ibmcloud/d/cf_account.html">cf_account</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cf-org") %>>
-					<a href="/docs/providers/ibmcloud/d/cf_org.html">cf_org</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cf-service-instance") %>>
-					<a href="/docs/providers/ibmcloud/d/cf_service_instance.html">cf_service_instance</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cf-service-key") %>>
-					<a href="/docs/providers/ibmcloud/d/cf_service_key.html">cf_service_key</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cf-service-plan") %>>
-					<a href="/docs/providers/ibmcloud/d/cf_service_plan.html">cf_service_plan</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cf-space") %>>
-					<a href="/docs/providers/ibmcloud/d/cf_space.html">cf_space</a>
-					</li>
-                	<li<%= sidebar_current("docs-ibmcloud-datasource-cs-cluster") %>>
-					<a href="/docs/providers/ibmcloud/d/cs_cluster.html">cs_cluster</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cs-cluster-config") %>>
-					<a href="/docs/providers/ibmcloud/d/cs_cluster_config.html">cs_cluster_config</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-cs-worker") %>>
-					<a href="/docs/providers/ibmcloud/d/cs_worker.html">cs_worker</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-infra-dns-domain") %>>
-					<a href="/docs/providers/ibmcloud/d/infra_dns_domain.html">infra_dns_domain</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-infra-image-template") %>>
-					<a href="/docs/providers/ibmcloud/d/infra_image_template.html">infra_image_template</a>
-					</li>			
-					<li<%= sidebar_current("docs-ibmcloud-datasource-infra-ssh-key") %>>
-					<a href="/docs/providers/ibmcloud/d/infra_ssh_key.html">infra_ssh_key</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-datasource-infra-vlan") %>>
-					<a href="/docs/providers/ibmcloud/d/infra_vlan.html">infra_vlan</a>
-					</li>
-				</ul>
-				</li>
-
-				<li<%= sidebar_current("docs-ibmcloud-resource") %>>
-				<a href="#">Infrastructure Resources</a>
-                <ul class="nav nav-visible">
-					<li<%= sidebar_current("docs-ibmcloud-resource-cf-service-instance") %>>
-					 <a href="/docs/providers/ibmcloud/r/cf_service_instance.html">cf_service_instance</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-cf-service-key") %>>
-					 <a href="/docs/providers/ibmcloud/r/cf_service_key.html">cf_service_key</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-cs-cluster") %>>
-					 <a href="/docs/providers/ibmcloud/r/cs_cluster.html">cs_cluster</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-cs-cluster-bind-service") %>>
-					 <a href="/docs/providers/ibmcloud/r/cs_cluster_bind_service.html">cs_cluster_bind_service</a>
-					</li>
-                	<li<%= sidebar_current("docs-ibmcloud-resource-infra-bare-metal") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_bare_metal.html">infra_bare_metal</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-basic-monitor") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_basic_monitor.html">infra_basic_monitor</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-block-storage") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_block_storage.html">infra_block_storage</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-dns-domain") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_dns_domain.html">infra_dns_domain</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-dns-domain-record") %>>
-					<a href="/docs/providers/ibmcloud/r/infra_dns_domain_record.html">infra_dns_domain_record</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-file-storage") %>>
-                    <a href="/docs/providers/ibmcloud/r/infra_file_storage.html">infra_file_storage</a>
-                    </li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-fw-hardware-dedicated") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_fw_hardware_dedicated.html">infra_fw_hardware_dedicated</a>
-					</li>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-fw-hardware-dedicated-rules") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_fw_hardware_dedicated_rules.html">infra_fw_hardware_dedicated_rules</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-global-ip") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_global_ip.html">infra_global_ip</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-local") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_local.html">infra_lb_local</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-local-service") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_local_service.html">infra_lb_local_service</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-local-service-group") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_local_service_group.html">infra_lb_local_service_group</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_vpx.html">infra_lb_vpx</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx-ha") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_vpx_ha.html">infra_lb_vpx_ha</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx-service") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_vpx_service.html">infra_lb_vpx_service</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx-vip") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_lb_vpx_vip.html">infra_lb_local_vpx_vip</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-objectstorage-account") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_objectstorage_account.html">infra_objectstorage_account</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-provisioning-hook") %>>
-					<a href="/docs/providers/ibmcloud/r/infra_provisioning_hook.html">infra_provisioning_hook</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-scale-group") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_scale_group.html">infra_scale_group</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-scale-policy") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_scale_policy.html">infra_scale_policy</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-security-certificate") %>>
-					<a href="/docs/providers/ibmcloud/r/infra_security_certificate.html">infra_security_certificate</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-ssh-key") %>>
-					<a href="/docs/providers/ibmcloud/r/infra_ssh_key.html">infra_ssh_key</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-user") %>>
-					<a href="/docs/providers/ibmcloud/r/infra_user.html">infra_user</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-virtual-guest") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_virtual_guest.html">infra_virtual_guest</a>
-					</li>
-					<li<%= sidebar_current("docs-ibmcloud-resource-infra-vlan") %>>
-					 <a href="/docs/providers/ibmcloud/r/infra_vlan.html">infra_vlan</a>
-					</li>
-
-				</ul>
-				</li>
-			</ul>
-		</div>
-	<% end %>
-
-	<%= yield %>
-<% end %>
+  <% content_for :sidebar do %>
+    <div class="docs-sidebar hidden-print affix-top" role="complementary">
+      <ul class="nav docs-sidenav">
+        <li<%= sidebar_current("docs-home") %>>
+          <a href="/docs/providers/index.html">All Providers</a>
+        </li>
+        <li<%= sidebar_current("docs-ibmcloud-index") %>>
+          <a href="/docs/providers/ibmcloud/index.html">IBM Cloud Provider</a>
+        </li>
+        <li<%= sidebar_current("docs-ibmcloud-datasource-cf") %>>
+          <a href="#">Cloud Foundry Data Sources</a>
+          <ul class="nav nav-visible">
+            <li<%= sidebar_current("docs-ibmcloud-datasource-cf-account") %>>
+              <a href="/docs/providers/ibmcloud/d/cf_account.html">cf_account</a>
+            </li>
+            <li<%= sidebar_current("docs-ibmcloud-datasource-cf-org") %>>
+              <a href="/docs/providers/ibmcloud/d/cf_org.html">cf_org</a>
+            </li>
+            <li<%= sidebar_current("docs-ibmcloud-datasource-cf-service-instance") %>>
+              <a href="/docs/providers/ibmcloud/d/cf_service_instance.html">cf_service_instance</a>
+            </li>
+            <li<%= sidebar_current("docs-ibmcloud-datasource-cf-service-key") %>>
+              <a href="/docs/providers/ibmcloud/d/cf_service_key.html">cf_service_key</a>
+            </li>
+            <li<%= sidebar_current("docs-ibmcloud-datasource-cf-service-plan") %>>
+              <a href="/docs/providers/ibmcloud/d/cf_service_plan.html">cf_service_plan</a>
+            </li>
+            <li<%= sidebar_current("docs-ibmcloud-datasource-cf-space") %>>
+              <a href="/docs/providers/ibmcloud/d/cf_space.html">cf_space</a>
+            </li>
+          </ul>
+          <li<%= sidebar_current("docs-ibmcloud-datasource-cs") %>>
+            <a href="#">Container Data Sources</a>
+            <ul class="nav nav-visible">
+              <li<%= sidebar_current("docs-ibmcloud-datasource-cs-cluster") %>>
+                <a href="/docs/providers/ibmcloud/d/cs_cluster.html">cs_cluster</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-datasource-cs-cluster-config") %>>
+                <a href="/docs/providers/ibmcloud/d/cs_cluster_config.html">cs_cluster_config</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-datasource-cs-worker") %>>
+                <a href="/docs/providers/ibmcloud/d/cs_worker.html">cs_worker</a>
+              </li>
+            </ul>
+          </li>
+          <li<%= sidebar_current("docs-ibmcloud-datasource-infra") %>>
+            <a href="#">Infrastructure Data Sources</a>
+            <ul class="nav nav-visible">
+              <li<%= sidebar_current("docs-ibmcloud-datasource-infra-dns-domain") %>>
+                <a href="/docs/providers/ibmcloud/d/infra_dns_domain.html">infra_dns_domain</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-datasource-infra-image-template") %>>
+                <a href="/docs/providers/ibmcloud/d/infra_image_template.html">infra_image_template</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-datasource-infra-ssh-key") %>>
+                <a href="/docs/providers/ibmcloud/d/infra_ssh_key.html">infra_ssh_key</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-datasource-infra-vlan") %>>
+                <a href="/docs/providers/ibmcloud/d/infra_vlan.html">infra_vlan</a>
+              </li>
+            </ul>
+          </li>
+          <li<%= sidebar_current("docs-ibmcloud-resource-cf") %>>
+            <a href="#">Cloud Foundry Resources</a>
+            <ul class="nav nav-visible">
+              <li<%= sidebar_current("docs-ibmcloud-resource-cf-service-instance") %>>
+                <a href="/docs/providers/ibmcloud/r/cf_service_instance.html">cf_service_instance</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-cf-service-key") %>>
+                <a href="/docs/providers/ibmcloud/r/cf_service_key.html">cf_service_key</a>
+              </li>
+            </ul>
+          </li>
+          <li<%= sidebar_current("docs-ibmcloud-resource-cs") %>>
+            <a href="#">Container Resources</a>
+            <ul class="nav nav-visible">
+              <li<%= sidebar_current("docs-ibmcloud-resource-cs-cluster") %>>
+                <a href="/docs/providers/ibmcloud/r/cs_cluster.html">cs_cluster</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-cs-cluster-bind-service") %>>
+                <a href="/docs/providers/ibmcloud/r/cs_cluster_bind_service.html">cs_cluster_bind_service</a>
+              </li>
+            </ul>
+          </li>
+          <li<%= sidebar_current("docs-ibmcloud-resource-infra") %>>
+            <a href="#">Infrastructure Resources</a>
+            <ul class="nav nav-visible">
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-bare-metal") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_bare_metal.html">infra_bare_metal</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-basic-monitor") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_basic_monitor.html">infra_basic_monitor</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-block-storage") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_block_storage.html">infra_block_storage</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-dns-domain") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_dns_domain.html">infra_dns_domain</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-dns-domain-record") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_dns_domain_record.html">infra_dns_domain_record</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-file-storage") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_file_storage.html">infra_file_storage</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-fw-hardware-dedicated") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_fw_hardware_dedicated.html">infra_fw_hardware_dedicated</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-fw-hardware-dedicated-rules") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_fw_hardware_dedicated_rules.html">infra_fw_hardware_dedicated_rules</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-global-ip") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_global_ip.html">infra_global_ip</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-local") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_local.html">infra_lb_local</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-local-service") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_local_service.html">infra_lb_local_service</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-local-service-group") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_local_service_group.html">infra_lb_local_service_group</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_vpx.html">infra_lb_vpx</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx-ha") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_vpx_ha.html">infra_lb_vpx_ha</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx-service") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_vpx_service.html">infra_lb_vpx_service</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-lb-vpx-vip") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_lb_vpx_vip.html">infra_lb_local_vpx_vip</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-objectstorage-account") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_objectstorage_account.html">infra_objectstorage_account</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-provisioning-hook") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_provisioning_hook.html">infra_provisioning_hook</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-scale-group") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_scale_group.html">infra_scale_group</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-scale-policy") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_scale_policy.html">infra_scale_policy</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-security-certificate") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_security_certificate.html">infra_security_certificate</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-ssh-key") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_ssh_key.html">infra_ssh_key</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-user") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_user.html">infra_user</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-virtual-guest") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_virtual_guest.html">infra_virtual_guest</a>
+              </li>
+              <li<%= sidebar_current("docs-ibmcloud-resource-infra-vlan") %>>
+                <a href="/docs/providers/ibmcloud/r/infra_vlan.html">infra_vlan</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+    <%= yield %>
+  <% end %>
