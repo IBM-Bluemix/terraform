@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"strings"
+
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -50,6 +52,27 @@ func testAccCheckIBMCloudCFServiceKeyExists(n string, obj *cfv2.ServiceKeyFields
 		*obj = *serviceKey
 		return nil
 	}
+}
+
+func testAccCheckIBMCloudCFServiceKeyDestroy(s *terraform.State) error {
+	serviceKeyRepo := testAccProvider.Meta().(ClientSession).CloudFoundryServiceKeyClient()
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "ibmcloud_cf_service_key" {
+			continue
+		}
+
+		serviceKeyGuid := rs.Primary.ID
+
+		// Try to find the key
+		_, err := serviceKeyRepo.Get(serviceKeyGuid)
+
+		if err != nil && !strings.Contains(err.Error(), "404") {
+			return fmt.Errorf("Error waiting for CF service key (%s) to be destroyed: %s", rs.Primary.ID, err)
+		}
+	}
+
+	return nil
 }
 
 func testAccCheckIBMCloudCFServiceKey_basic(serviceName, serviceKey string) string {

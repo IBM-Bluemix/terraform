@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"strings"
+
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -17,8 +19,9 @@ func TestAccIBMCloudCFServiceInstance_Basic(t *testing.T) {
 	updateName := fmt.Sprintf("terraform_%d", acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIBMCloudInfraScaleGroupDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config: testAccCheckIBMCloudCFServiceInstance_basic(serviceName),
@@ -28,6 +31,16 @@ func TestAccIBMCloudCFServiceInstance_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "service", "cleardb"),
 					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "plan", "spark"),
 					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "tags.#", "2"),
+				),
+			},
+			resource.TestStep{
+				Config: testAccCheckIBMCloudCFServiceInstance_updateWithSameName(serviceName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccCheckIBMCloudCFServiceInstanceExists("ibmcloud_cf_service_instance.service", &conf),
+					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "name", serviceName),
+					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "service", "cleardb"),
+					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "plan", "spark"),
+					resource.TestCheckResourceAttr("ibmcloud_cf_service_instance.service", "tags.#", "3"),
 				),
 			},
 			resource.TestStep{
@@ -50,6 +63,27 @@ func TestAccIBMCloudCFServiceInstance_Basic(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccCheckIBMCloudCFServiceInstanceDestroy(s *terraform.State) error {
+	serviceRepo := testAccProvider.Meta().(ClientSession).CloudFoundryServiceInstanceClient()
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "ibmcloud_cf_service_instance" {
+			continue
+		}
+
+		serviceGuid := rs.Primary.ID
+
+		// Try to find the key
+		_, err := serviceRepo.Get(serviceGuid)
+
+		if err != nil && !strings.Contains(err.Error(), "404") {
+			return fmt.Errorf("Error waiting for CF service (%s) to be destroyed: %s", rs.Primary.ID, err)
+		}
+	}
+
+	return nil
 }
 
 func testAccCheckIBMCloudCFServiceInstanceExists(n string, obj *cfv2.ServiceInstanceFields) resource.TestCheckFunc {
@@ -86,6 +120,23 @@ func testAccCheckIBMCloudCFServiceInstance_basic(serviceName string) string {
 			service           = "cleardb"
 			plan              = "spark"
 			tags               = ["cluster-service","cluster-bind"]
+		}
+	`, cfSpace, cfOrganization, serviceName)
+}
+
+func testAccCheckIBMCloudCFServiceInstance_updateWithSameName(serviceName string) string {
+	return fmt.Sprintf(`
+		data "ibmcloud_cf_space" "spacedata" {
+			space  = "%s"
+			org    = "%s"
+		}
+		
+		resource "ibmcloud_cf_service_instance" "service" {
+			name              = "%s"
+			space_guid        = "${data.ibmcloud_cf_space.spacedata.id}"
+			service           = "cleardb"
+			plan              = "spark"
+			tags               = ["cluster-service","cluster-bind","db"]
 		}
 	`, cfSpace, cfOrganization, serviceName)
 }
