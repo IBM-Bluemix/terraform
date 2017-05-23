@@ -135,9 +135,8 @@ func resourceIBMCloudCfServiceInstanceUpdate(d *schema.ResourceData, meta interf
 	var name, planguid string
 	var parameters map[string]interface{}
 	var tags []string
-	if d.HasChange("name") {
-		name = d.Get("name").(string)
-	}
+
+	name = d.Get("name").(string)
 
 	if d.HasChange("plan") {
 		plan := d.Get("plan").(string)
