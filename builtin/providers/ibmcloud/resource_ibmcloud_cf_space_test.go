@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
+	"github.com/IBM-Bluemix/bluemix-go/bmxerror"
 )
 
 func TestAccIBMCloudCFSpace_Basic(t *testing.T) {
@@ -17,8 +18,9 @@ func TestAccIBMCloudCFSpace_Basic(t *testing.T) {
 	updatedName := fmt.Sprintf("terraform_updated_%d", acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIBMCloudCFSpaceDestroy,
 		Steps: []resource.TestStep{
 
 			resource.TestStep{
@@ -60,6 +62,26 @@ func testAccCheckIBMCloudCFSpaceExists(n string, obj *cfv2.SpaceFields) resource
 		*obj = *space
 		return nil
 	}
+}
+
+func testAccCheckIBMCloudCFSpaceDestroy(s *terraform.State) error {
+	spaceClient := testAccProvider.Meta().(ClientSession).CloudFoundrySpaceClient()
+
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "ibmcloud_cf_space" {
+			continue
+		}
+
+		spaceGUID := rs.Primary.ID
+		_, err := spaceClient.Get(spaceGUID)
+
+		if err != nil {
+			if apierr, ok := err.(bmxerror.RequestFailure); ok && apierr.StatusCode() != 404 {
+				return fmt.Errorf("Error waiting for Space (%s) to be destroyed: %s", rs.Primary.ID, err)
+			}
+		}
+	}
+	return nil
 }
 
 func testAccCheckIBMCloudCFSpaceCreate(name string) string {
