@@ -81,6 +81,9 @@ type ClientSession interface {
 	CloudFoundryServiceOfferingClient() cfv2.ServiceOfferings
 	CloudFoundrySpaceClient() cfv2.Spaces
 	CloudFoundrySpaceQuotaClient() cfv2.SpaceQuotas
+	CloudFoundryRouteClient() cfv2.Routes
+	CloudFoundrySharedDomainClient() cfv2.SharedDomains
+	CloudFoundryPrivateDomainClient() cfv2.PrivateDomains
 
 	BluemixAcccountClient() accountv2.Accounts
 }
@@ -100,6 +103,9 @@ type clientSession struct {
 	cfServicePlanClient      cfv2.ServicePlans
 	cfServiceKeysClient      cfv2.ServiceKeys
 	cfServiceOfferingsClient cfv2.ServiceOfferings
+	cfRouteClient            cfv2.Routes
+	cfSharedDomainClient     cfv2.SharedDomains
+	cfPrivateDomainClient    cfv2.PrivateDomains
 
 	bluemixAccountClient accountv2.Accounts
 }
@@ -142,6 +148,21 @@ func (sess clientSession) CloudFoundryServiceKeyClient() cfv2.ServiceKeys {
 // CloudFoundryServiceClient providers Cloud Foundary service APIs
 func (sess clientSession) CloudFoundryServiceOfferingClient() cfv2.ServiceOfferings {
 	return sess.cfServiceOfferingsClient
+}
+
+// CloudFoundryRoute providers Cloud Foundary route APIs
+func (sess clientSession) CloudFoundryRouteClient() cfv2.Routes {
+	return sess.cfRouteClient
+}
+
+// CloudFoundrySharedDomainClient providers Cloud Foundary shared domain APIs
+func (sess clientSession) CloudFoundrySharedDomainClient() cfv2.SharedDomains {
+	return sess.cfSharedDomainClient
+}
+
+// CloudFoundryPrivateDomainClient providers Cloud Foundary private domain APIs
+func (sess clientSession) CloudFoundryPrivateDomainClient() cfv2.PrivateDomains {
+	return sess.cfPrivateDomainClient
 }
 
 // BluemixAcccountClient providers Bluemix Account APIs
@@ -203,6 +224,9 @@ func (c *Config) ClientSession() (interface{}, error) {
 	servicePlanAPI := cfClient.ServicePlans()
 	serviceKeysAPI := cfClient.ServiceKeys()
 	serviceOfferringAPI := cfClient.ServiceOfferings()
+	routeAPI := cfClient.Routes()
+	sharedDomainAPI := cfClient.SharedDomains()
+	privateDomainAPI := cfClient.PrivateDomains()
 
 	accClient, err := accountv2.New(sess.BluemixSession)
 	if err != nil {
@@ -243,6 +267,9 @@ func (c *Config) ClientSession() (interface{}, error) {
 	session.cfServicePlanClient = servicePlanAPI
 	session.cfServiceOfferingsClient = serviceOfferringAPI
 	session.cfSpaceClient = spaceAPI
+	session.cfRouteClient = routeAPI
+	session.cfSharedDomainClient = sharedDomainAPI
+	session.cfPrivateDomainClient = privateDomainAPI
 	session.bluemixAccountClient = accountAPI
 
 	return session, nil

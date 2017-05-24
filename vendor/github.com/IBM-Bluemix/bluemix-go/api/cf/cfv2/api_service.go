@@ -23,6 +23,11 @@ type CfServiceAPI interface {
 	ServicePlans() ServicePlans
 	ServiceOfferings() ServiceOfferings
 	SpaceQuotas() SpaceQuotas
+	Apps() Apps
+	Routes() Routes
+	SharedDomains() SharedDomains
+	PrivateDomains() PrivateDomains
+	ServiceBindings() ServiceBindings
 }
 
 //CfService holds the client
@@ -100,4 +105,33 @@ func (c *cfService) ServiceKeys() ServiceKeys {
 //SpaceQuotas implements SpaceQuota APIs
 func (c *cfService) SpaceQuotas() SpaceQuotas {
 	return newSpaceQuotasAPI(c.Client)
+}
+
+//ServiceBindings implements ServiceBindings APIs
+func (c *cfService) ServiceBindings() ServiceBindings {
+	return newServiceBindingAPI(c.Client)
+}
+
+//Apps implements Apps APIs
+
+func (c *cfService) Apps() Apps {
+	return newAppAPI(c.Client)
+}
+
+//Routes implements Route APIs
+
+func (c *cfService) Routes() Routes {
+	return newRouteAPI(c.Client)
+}
+
+//SharedDomains implements SharedDomian APIs
+
+func (c *cfService) SharedDomains() SharedDomains {
+	return newSharedDomainAPI(c.Client)
+}
+
+//PrivateDomains implements PrivateDomains APIs
+
+func (c *cfService) PrivateDomains() PrivateDomains {
+	return newPrivateDomainAPI(c.Client)
 }
