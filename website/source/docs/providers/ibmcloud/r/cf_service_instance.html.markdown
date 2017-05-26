@@ -40,7 +40,7 @@ The following arguments are supported:
 * `tags` - (Optional, list) User-provided tags.
 * `parameters` - (Optional, map) Arbitrary parameters to pass along to the service broker. Must be a JSON object.
 
-## Attributes Reference6
+## Attributes Reference
 
 The following attributes are exported:
 
