@@ -63,3 +63,14 @@ func validateRoutePort(v interface{}, k string) (ws []string, errors []error) {
 	}
 	return
 }
+
+func validateDomainName(v interface{}, k string) (ws []string, errors []error) {
+	value := v.(string)
+
+	if !(strings.Contains(value, ".")) {
+		errors = append(errors, fmt.Errorf(
+			"%q (%q) must contain a '.',example.com,foo.example.com", k, value))
+	}
+
+	return
+}
