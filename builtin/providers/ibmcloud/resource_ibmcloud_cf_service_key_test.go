@@ -19,8 +19,9 @@ func TestAccIBMCloudCFServiceKey_Basic(t *testing.T) {
 	serviceKey := fmt.Sprintf("terraform_%d", acctest.RandInt())
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIBMCloudCFServiceKeyDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config: testAccCheckIBMCloudCFServiceKey_basic(serviceName, serviceKey),
