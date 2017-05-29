@@ -34,9 +34,9 @@ The following arguments are supported:
 * `service_instance_space_guid` - (Required) The space GUID the service instance is associated with.
 * `service_instance_name_id` - (Required) The name or ID of the service that you want to bind to the cluster.
 * `namespace_id` - (Required) The Kubernetes namespace.
-* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with.
-* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with.
-* `account_guid` - (Optional) The GUID for the Bluemix account that the cluster is associated with.
+* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with. The values can be retrieved from data source `ibmcloud_cf_org`.
+* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with. The values can be retrieved from data source `ibmcloud_cf_space`.
+* `account_guid` - (Optional) The GUID for the Bluemix account that the cluster is associated with. The values can be retrieved from data source `ibmcloud_cf_account`.
     
 ## Attributes Reference
 

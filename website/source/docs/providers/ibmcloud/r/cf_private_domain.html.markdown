@@ -30,7 +30,7 @@ resource "ibmcloud_cf_private_domain" "domain" {
 The following arguments are supported:
 
 * `name` - (Required, string) The name of the domain.
-* `org_guid` - (Required, string) The organization that owns the domain. The values can be retrieved from data source `ibmcloud_cf_org`.
+* `org_guid` - (Required, string) The GUID of the organization that owns the domain. The values can be retrieved from data source `ibmcloud_cf_org`.
 
 ## Attributes Reference
 

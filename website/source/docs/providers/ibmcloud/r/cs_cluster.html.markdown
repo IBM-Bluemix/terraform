@@ -39,9 +39,9 @@ The following arguments are supported:
 
 * `name` - (Required) Name of the cluster.
 * `datacenter` - (Required)  The data center of the worker nodes. Use the `bluemix cs locations` command to find the datacenters. Installing Bluemix cli and Installing IBM-Containers plugin can be found [here](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started)
-* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with.
-* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with.
-* `account_guid` - (Required) The GUID for the Bluemix account that the cluster is associated with.
+* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with. The values can be retrieved from data source `ibmcloud_cf_org`.
+* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with. The values can be retrieved from data source `ibmcloud_cf_space`.
+* `account_guid` - (Required) The GUID for the Bluemix account that the cluster is associated with. The values can be retrieved from data source `ibmcloud_cf_account`.
 * `workers` - (Required) The worker nodes that needs to be added to the cluster.
 * `machinetype` - (Optional) The machine type of the worker nodes. Use the `bluemix cs machine-types <datacenter>` command to find the machinetype supported for a datacenter.
 * `billing` -  (Optional) The billing type for the instance. Accepted values are `hourly` or `monthly`.

@@ -36,7 +36,7 @@ resource "ibmcloud_cf_route" "route" {
 
 The following arguments are supported:
 
-* `domain_guid` - (Required, string) The GUID of the associated domain. The values can be retrieved from data source `ibmcloud_cf_shared_domain`.
+* `domain_guid` - (Required, string) The GUID of the associated domain. The values can be retrieved from data source `ibmcloud_cf_shared_domain` or `ibmcloud_cf_private_domain`.
 * `space_guid` - (Required, string) The GUID of the space where you want to create the route. The values can be retrieved from data source `ibmcloud_cf_space`.
 * `host` - (Optional, string) The host portion of the route. Required for shared-domains.
 * `port` - (Optional, int) The port of the route. Supported for domains of TCP router groups only.

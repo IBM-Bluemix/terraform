@@ -34,4 +34,4 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `id` - The GUID of the new space.
+* `id` - The ID of the new space.

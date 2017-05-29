@@ -19,10 +19,10 @@ data "ibmcloud_cf_space" "spaceData" {
 }
 ```
 
-The following example shows how you can use the data source to reference the space ID in the `ibmcloud_cf_service` resource.
+The following example shows how you can use the data source to reference the space ID in the `ibmcloud_cf_service_instance` resource.
 
 ```hcl
-resource "ibmcloud_cf_service" "service_instance" {
+resource "ibmcloud_cf_service_instance" "service_instance" {
   name              = "test"
   space_guid        = "${data.ibmcloud_cf_space.spaceData.id}"
   service           = "cloudantNOSQLDB"

@@ -28,16 +28,16 @@ data "ibmcloud_cs_cluster" "cluster_foo" {
 The following arguments are supported:
 
 * `worker_id` - (Required) ID of the worker node attached to the cluster.
-* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with.
-* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with.
-* `account_guid` - (Required) The GUID for the Bluemix account that the cluster is associated with.
+* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with. The value can be retrieved from the `ibmcloud_cf_org` data source.
+* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with. The value can be retrieved from the `ibmcloud_cf_space` data source.
+* `account_guid` - (Required) The GUID for the Bluemix account that the cluster is associated with. The value can be retrieved from the `ibmcloud_cf_account` data source.
 
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `state` - Set to the ID of the cluster.
+* `state` - The unique identifier of the cluster.
 * `status` - Number of workers nodes attached to the cluster.
 * `private_vlan` - The private VLAN of the worker node.
 * `public_vlan` -  The public VLAN of the worker node.

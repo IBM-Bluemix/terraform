@@ -26,7 +26,7 @@ resource "ibmcloud_cf_shared_domain" "domain" {
 The following arguments are supported:
 
 * `name` - (Required, string) The name of the domain.
-* `router_group_guid` - (Optional, string) The guid of the router group.
+* `router_group_guid` - (Optional, string) The GUID of the router group.
 
 ## Attributes Reference
 

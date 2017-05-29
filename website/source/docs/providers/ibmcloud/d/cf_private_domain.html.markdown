@@ -14,7 +14,7 @@ Import the details of an existing IBM Bluemix private domain as a read-only data
 
 ```hcl
 
-data "ibmcloud_cf_private_domain" "testacc_private_domain" {
+data "ibmcloud_cf_private_domain" "private_domain" {
 	name = "foo.com"
 }
 
