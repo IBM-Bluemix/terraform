@@ -75,12 +75,6 @@ func resourceIBMCloudCfApp() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Set:         schema.HashString,
 			},
-			"wait_time_minutes": {
-				Description: "Define timeout to wait for the app to start. Default is no wait",
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     0,
-			},
 			"app_path": {
 				Description: "Define the  path of the zip file of the application.",
 				Type:        schema.TypeString,
@@ -90,6 +84,17 @@ func resourceIBMCloudCfApp() *schema.Resource {
 				Description: "Version of the application",
 				Type:        schema.TypeString,
 				Optional:    true,
+			},
+			"command": {
+				Description: "The initial command for the app",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"wait_time_minutes": {
+				Description: "Define timeout to wait for the app instances to start update/restage etc. For example, if memory is updated then instances are automatically destroyed and new one spun up by the Cloud controller.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     20,
 			},
 		},
 	}
@@ -126,6 +131,11 @@ func resourceIBMCloudCfAppCreate(d *schema.ResourceData, meta interface{}) error
 		appCreatePayload.EnvironmentJSON = helpers.Map(environmentJSON.(map[string]interface{}))
 
 	}
+
+	if command, ok := d.GetOk("command"); ok {
+		appCreatePayload.Command = helpers.String(command.(string))
+	}
+
 	_, err := appClient.FindByName(spaceGUID, name)
 	if err == nil {
 		return fmt.Errorf("%s already exists in the given space %s", name, spaceGUID)
@@ -176,13 +186,11 @@ func resourceIBMCloudCfAppCreate(d *schema.ResourceData, meta interface{}) error
 			return fmt.Errorf("Error uploading app bits: %s", err)
 		}
 	}
-
 	err = restartApp(appGUID, d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[INFO] Application: %s has started successfully", name)
-
 	return resourceIBMCloudCfAppRead(d, meta)
 }
 
@@ -203,6 +211,7 @@ func resourceIBMCloudCfAppRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("disk_quota", appData.Entity.DiskQuota)
 	d.Set("buildpack", appData.Entity.BuildPack)
 	d.Set("environment_json", appData.Entity.EnvironmentJSON)
+	d.Set("command", appData.Entity.Command)
 
 	route, err := appClient.ListRoutes(appGUID)
 	if err != nil {
@@ -253,9 +262,14 @@ func resourceIBMCloudCfAppUpdate(d *schema.ResourceData, meta interface{}) error
 		restageRequired = true
 	}
 
-	if d.HasChange("environment_json") {
+	if d.HasChange("command") {
+		appUpdatePayload.Command = helpers.String(d.Get("command").(string))
 		restartRequired = true
+	}
+
+	if d.HasChange("environment_json") {
 		appUpdatePayload.EnvironmentJSON = helpers.Map(d.Get("environment_json").(map[string]interface{}))
+		restartRequired = true
 	}
 	log.Println("[INFO] Update cloud foundary application")
 
@@ -323,7 +337,6 @@ func resourceIBMCloudCfAppUpdate(d *schema.ResourceData, meta interface{}) error
 					return fmt.Errorf("Error while binding service instance %s to application %s: %q", add[i], appGUID, err)
 				}
 				restartRequired = true
-
 			}
 		}
 		if len(remove) > 0 {
@@ -352,13 +365,23 @@ func resourceIBMCloudCfAppUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if restageRequired {
-		//Do the restage. Wait till restage completes
-	}
-	//Wait till number of instances are same as requested and all are running
-	if restartRequired {
+		log.Println("[INFO] Restage since buildpack has changed")
+		err := restageApp(appGUID, d, meta)
+		if err != nil {
+			return err
+		}
+	} else if restartRequired {
 		err := restartApp(appGUID, d, meta)
 		if err != nil {
 			return err
+		}
+	} else {
+		//In case only memory/disk etc are updated then cloud controlled would destroy the current application controller
+		//and spin new ones, so we are waiting till they come up again
+		waitTimeout := time.Duration(d.Get("wait_time_minutes").(int)) * time.Minute
+		state, err := appClient.WaitForInstanceStatus(v2.AppRunningState, appGUID, waitTimeout)
+		if waitTimeout != 0 && (err != nil || state != v2.AppRunningState) {
+			return fmt.Errorf("All applications instances  couldn't be started, Current status is %s, %q", state, err)
 		}
 	}
 
@@ -427,12 +450,32 @@ func restartApp(appGUID string, d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("Error while starting application : %s", err)
 	}
 	if waitTimeout != 0 {
-		if status.PackageState != v2.AppStagedState {
-			return fmt.Errorf("Applications couldn't be staged  %s", err)
-		}
-		if status.InstanceState != v2.AppRunningState {
-			return fmt.Errorf("Applications instances  couldn't be started %s", err)
-		}
+		return checkAppStatus(status)
+	}
+	return nil
+}
+
+func restageApp(appGUID string, d *schema.ResourceData, meta interface{}) error {
+	appClient := meta.(ClientSession).CloudFoundryAppClient()
+
+	log.Println("[INFO] Restage Application")
+	waitTimeout := time.Duration(d.Get("wait_time_minutes").(int)) * time.Minute
+	status, err := appClient.Restage(appGUID, waitTimeout)
+	if err != nil {
+		return fmt.Errorf("Error while restaging application : %s", err)
+	}
+	if waitTimeout != 0 {
+		return checkAppStatus(status)
+	}
+	return nil
+}
+
+func checkAppStatus(status *v2.AppState) error {
+	if status.PackageState != v2.AppStagedState {
+		return fmt.Errorf("Applications couldn't be staged, current status is  %s", status.PackageState)
+	}
+	if status.InstanceState != v2.AppRunningState {
+		return fmt.Errorf("Applications instances  couldn't be started, current status is %s", status.InstanceState)
 	}
 	return nil
 }
