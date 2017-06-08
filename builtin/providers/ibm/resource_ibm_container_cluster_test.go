@@ -60,7 +60,7 @@ func testAccCheckIBMContainerClusterDestroy(s *terraform.State) error {
 	return nil
 }
 
-func getClusterTargetHeaderTestACC() *v1.ClusterTargetHeader {
+func getClusterTargetHeaderTestACC() v1.ClusterTargetHeader {
 	org := cfOrganization
 	space := cfSpace
 	c := new(bluemix.Config)
@@ -99,7 +99,7 @@ func getClusterTargetHeaderTestACC() *v1.ClusterTargetHeader {
 		log.Fatal(err)
 	}
 
-	target := &v1.ClusterTargetHeader{
+	target := v1.ClusterTargetHeader{
 		OrgID:     myorg.GUID,
 		SpaceID:   myspace.GUID,
 		AccountID: myAccount.GUID,

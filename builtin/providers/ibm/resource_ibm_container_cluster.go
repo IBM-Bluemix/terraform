@@ -193,7 +193,7 @@ func resourceIBMContainerClusterCreate(d *schema.ResourceData, meta interface{})
 	noSubnet := d.Get("no_subnet").(bool)
 	isolation := d.Get("isolation").(string)
 
-	params := &v1.ClusterCreateRequest{
+	params := v1.ClusterCreateRequest{
 		Name:        name,
 		Datacenter:  datacenter,
 		WorkerNum:   len(workers),
@@ -490,7 +490,7 @@ func resourceIBMContainerClusterDelete(d *schema.ResourceData, meta interface{})
 }
 
 // WaitForClusterAvailable Waits for cluster creation
-func WaitForClusterAvailable(d *schema.ResourceData, meta interface{}, target *v1.ClusterTargetHeader) (interface{}, error) {
+func WaitForClusterAvailable(d *schema.ResourceData, meta interface{}, target v1.ClusterTargetHeader) (interface{}, error) {
 	csClient, err := meta.(ClientSession).CSAPI()
 	if err != nil {
 		return nil, err
@@ -510,7 +510,7 @@ func WaitForClusterAvailable(d *schema.ResourceData, meta interface{}, target *v
 	return stateConf.WaitForState()
 }
 
-func clusterStateRefreshFunc(client v1.Clusters, instanceID string, d *schema.ResourceData, target *v1.ClusterTargetHeader) resource.StateRefreshFunc {
+func clusterStateRefreshFunc(client v1.Clusters, instanceID string, d *schema.ResourceData, target v1.ClusterTargetHeader) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		clusterFields, err := client.Find(instanceID, target)
 		if err != nil {
@@ -528,7 +528,7 @@ func clusterStateRefreshFunc(client v1.Clusters, instanceID string, d *schema.Re
 }
 
 // WaitForWorkerAvailable Waits for worker creation
-func WaitForWorkerAvailable(d *schema.ResourceData, meta interface{}, target *v1.ClusterTargetHeader) (interface{}, error) {
+func WaitForWorkerAvailable(d *schema.ResourceData, meta interface{}, target v1.ClusterTargetHeader) (interface{}, error) {
 	csClient, err := meta.(ClientSession).CSAPI()
 	if err != nil {
 		return nil, err
@@ -548,7 +548,7 @@ func WaitForWorkerAvailable(d *schema.ResourceData, meta interface{}, target *v1
 	return stateConf.WaitForState()
 }
 
-func workerStateRefreshFunc(client v1.Workers, instanceID string, d *schema.ResourceData, target *v1.ClusterTargetHeader) resource.StateRefreshFunc {
+func workerStateRefreshFunc(client v1.Workers, instanceID string, d *schema.ResourceData, target v1.ClusterTargetHeader) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		workerFields, err := client.List(instanceID, target)
 		if err != nil {
@@ -567,7 +567,7 @@ func workerStateRefreshFunc(client v1.Workers, instanceID string, d *schema.Reso
 	}
 }
 
-func WaitForSubnetAvailable(d *schema.ResourceData, meta interface{}, target *v1.ClusterTargetHeader) (interface{}, error) {
+func WaitForSubnetAvailable(d *schema.ResourceData, meta interface{}, target v1.ClusterTargetHeader) (interface{}, error) {
 	csClient, err := meta.(ClientSession).CSAPI()
 	if err != nil {
 		return nil, err
@@ -587,7 +587,7 @@ func WaitForSubnetAvailable(d *schema.ResourceData, meta interface{}, target *v1
 	return stateConf.WaitForState()
 }
 
-func subnetStateRefreshFunc(client v1.Clusters, instanceID string, d *schema.ResourceData, target *v1.ClusterTargetHeader) resource.StateRefreshFunc {
+func subnetStateRefreshFunc(client v1.Clusters, instanceID string, d *schema.ResourceData, target v1.ClusterTargetHeader) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		cluster, err := client.Find(instanceID, target)
 		if err != nil {

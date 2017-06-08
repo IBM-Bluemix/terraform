@@ -62,12 +62,12 @@ func resourceIBMContainerBindService() *schema.Resource {
 	}
 }
 
-func getClusterTargetHeader(d *schema.ResourceData) *v1.ClusterTargetHeader {
+func getClusterTargetHeader(d *schema.ResourceData) v1.ClusterTargetHeader {
 	orgGUID := d.Get("org_guid").(string)
 	spaceGUID := d.Get("space_guid").(string)
 	accountGUID := d.Get("account_guid").(string)
 
-	targetEnv := &v1.ClusterTargetHeader{
+	targetEnv := v1.ClusterTargetHeader{
 		OrgID:     orgGUID,
 		SpaceID:   spaceGUID,
 		AccountID: accountGUID,
@@ -85,7 +85,7 @@ func resourceIBMContainerBindServiceCreate(d *schema.ResourceData, meta interfac
 	serviceInstanceNameID := d.Get("service_instance_name_id").(string)
 	namespaceID := d.Get("namespace_id").(string)
 
-	bindService := &v1.ServiceBindRequest{
+	bindService := v1.ServiceBindRequest{
 		ClusterNameOrID:         clusterNameID,
 		SpaceGUID:               serviceInstanceSpaceGUID,
 		ServiceInstanceNameOrID: serviceInstanceNameID,

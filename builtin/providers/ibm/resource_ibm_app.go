@@ -145,7 +145,7 @@ func resourceIBMAppCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Println("[INFO] Creating Cloud Foundary Application")
-	app, err := appAPI.Create(&appCreatePayload)
+	app, err := appAPI.Create(appCreatePayload)
 	if err != nil {
 		return fmt.Errorf("Error creating app: %s", err)
 	}
@@ -285,7 +285,7 @@ func resourceIBMAppUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	log.Println("[INFO] Update cloud foundary application")
 
-	_, err = appAPI.Update(appGUID, &appUpdatePayload)
+	_, err = appAPI.Update(appGUID, appUpdatePayload)
 	if err != nil {
 		return fmt.Errorf("Error updating application: %s", err)
 	}
@@ -474,7 +474,7 @@ func restartApp(appGUID string, d *schema.ResourceData, meta interface{}) error 
 	cfClient, _ := meta.(ClientSession).CFAPI()
 	appAPI := cfClient.Apps()
 
-	appUpdatePayload := &v2.AppRequest{
+	appUpdatePayload := v2.AppRequest{
 		State: helpers.String(v2.AppStoppedState),
 	}
 	log.Println("[INFO] Stopping Application")
