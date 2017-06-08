@@ -15,11 +15,13 @@ import (
 const (
 	clusterNormal     = "normal"
 	workerNormal      = "normal"
+	subnetNormal      = "normal"
 	workerReadyState  = "Ready"
 	workerDeleteState = "deleted"
 
 	clusterProvisioning = "provisioning"
 	workerProvisioning  = "provisioning"
+	subnetProvisioning  = "provisioning"
 )
 
 func resourceIBMContainerCluster() *schema.Resource {
@@ -229,6 +231,14 @@ func resourceIBMContainerClusterCreate(d *schema.ResourceData, meta interface{})
 			}
 		}
 	}
+
+	if len(subnetIDs.List()) > 0 {
+		_, err = WaitForSubnetAvailable(d, meta, targetEnv)
+		if err != nil {
+			return fmt.Errorf(
+				"Error waiting for initializing ingress hostname and secret: %s", err)
+		}
+	}
 	whkAPI := csClient.WebHooks()
 	for _, e := range webhooks {
 		pack := e.(map[string]interface{})
@@ -402,6 +412,7 @@ func resourceIBMContainerClusterUpdate(d *schema.ResourceData, meta interface{})
 		}
 	}
 	//TODO put subnet can't deleted in the error message if such case is observed in the chnages
+	var subnetAdd bool
 	if d.HasChange("subnet_id") {
 		oldSubnets, newSubnets := d.GetChange("subnet_id")
 		oldSubnet := oldSubnets.(*schema.Set)
@@ -418,6 +429,14 @@ func resourceIBMContainerClusterUpdate(d *schema.ResourceData, meta interface{})
 				if err != nil {
 					return err
 				}
+				subnetAdd = true
+			}
+		}
+		if subnetAdd {
+			_, err = WaitForSubnetAvailable(d, meta, targetEnv)
+			if err != nil {
+				return fmt.Errorf(
+					"Error waiting for initializing ingress hostname and secret: %s", err)
 			}
 		}
 	}
@@ -545,6 +564,39 @@ func workerStateRefreshFunc(client v1.Workers, instanceID string, d *schema.Reso
 			}
 		}
 		return workerFields, workerNormal, nil
+	}
+}
+
+func WaitForSubnetAvailable(d *schema.ResourceData, meta interface{}, target *v1.ClusterTargetHeader) (interface{}, error) {
+	csClient, err := meta.(ClientSession).CSAPI()
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("Waiting for Ingress Subdomain and secret being assigned.")
+	id := d.Id()
+
+	stateConf := &resource.StateChangeConf{
+		Pending:    []string{"retry", workerProvisioning},
+		Target:     []string{workerNormal},
+		Refresh:    subnetStateRefreshFunc(csClient.Clusters(), id, d, target),
+		Timeout:    time.Duration(d.Get("wait_time_minutes").(int)) * time.Minute,
+		Delay:      10 * time.Second,
+		MinTimeout: 10 * time.Second,
+	}
+
+	return stateConf.WaitForState()
+}
+
+func subnetStateRefreshFunc(client v1.Clusters, instanceID string, d *schema.ResourceData, target *v1.ClusterTargetHeader) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		cluster, err := client.Find(instanceID, target)
+		if err != nil {
+			return nil, "", fmt.Errorf("Error retrieving cluster: %s", err)
+		}
+		if cluster.IngressHostname == "" && cluster.IngressSecretName == "" {
+			return cluster, subnetProvisioning, nil
+		}
+		return cluster, subnetNormal, nil
 	}
 }
 
