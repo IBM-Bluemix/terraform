@@ -26,6 +26,11 @@ func dataSourceIBMContainerCluster() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"bounded_services": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
 			"org_guid": {
 				Description: "The bluemix organization guid this cluster belongs to",
 				Type:        schema.TypeString,
@@ -68,9 +73,19 @@ func dataSourceIBMContainerClusterRead(d *schema.ResourceData, meta interface{})
 	for i, worker := range workerFields {
 		workers[i] = worker.ID
 	}
+	servicesBoundToCluster, err := csAPI.ListServicesBoundToCluster(name, "", targetEnv)
+	if err != nil {
+		return fmt.Errorf("Error retrieving services bound to cluster: %s", err)
+	}
+	boundedServices := make([]string, len(servicesBoundToCluster))
+	for i, service := range servicesBoundToCluster {
+		boundedServices[i] = service.ServiceName + " " + service.ServiceID + " " + service.ServiceKeyName + " " + service.Namespace
+	}
+
 	d.SetId(clusterFields.ID)
 	d.Set("worker_count", clusterFields.WorkerCount)
 	d.Set("workers", workers)
+	d.Set("bounded_services", boundedServices)
 
 	return nil
 }

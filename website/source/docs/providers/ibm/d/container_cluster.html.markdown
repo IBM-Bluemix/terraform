@@ -40,3 +40,4 @@ The following attributes are exported:
 * `id` - The unique identifier of the cluster.
 * `worker_count` - Number of workers attached to the cluster.
 * `workers` - IDs of the worker attached to the cluster.
+* `bounded_services` - Services that are bounded to the cluster.
