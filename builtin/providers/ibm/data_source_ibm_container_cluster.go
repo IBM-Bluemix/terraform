@@ -26,6 +26,30 @@ func dataSourceIBMContainerCluster() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
+			"bounded_services": {
+				Type:     schema.TypeSet,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"service_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"service_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"service_key_name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"namespace": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
 			"org_guid": {
 				Description: "The bluemix organization guid this cluster belongs to",
 				Type:        schema.TypeString,
@@ -68,9 +92,24 @@ func dataSourceIBMContainerClusterRead(d *schema.ResourceData, meta interface{})
 	for i, worker := range workerFields {
 		workers[i] = worker.ID
 	}
+	servicesBoundToCluster, err := csAPI.ListServicesBoundToCluster(name, "", targetEnv)
+	if err != nil {
+		return fmt.Errorf("Error retrieving services bound to cluster: %s", err)
+	}
+	boundedServices := make([]map[string]interface{}, 0)
+	for _, service := range servicesBoundToCluster {
+		boundedService := make(map[string]interface{})
+		boundedService["service_name"] = service.ServiceName
+		boundedService["service_id"] = service.ServiceID
+		boundedService["service_key_name"] = service.ServiceKeyName
+		boundedService["namespace"] = service.Namespace
+		boundedServices = append(boundedServices, boundedService)
+	}
+
 	d.SetId(clusterFields.ID)
 	d.Set("worker_count", clusterFields.WorkerCount)
 	d.Set("workers", workers)
+	d.Set("bounded_services", boundedServices)
 
 	return nil
 }
