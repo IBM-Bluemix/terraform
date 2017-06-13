@@ -58,8 +58,8 @@ The following arguments are supported:
 * `iops` - (Required, float) The IOPS value for the storage. You can find available values for Endurance storage in the [Bluemix Infrastructure (SoftLayer) docs](https://knowledgelayer.softlayer.com/learning/introduction-endurance-storage).
 * `os_format_type` - (Required, string) Specifies which OS type to use when formatting the storage space. This should match the OS type that will be connecting to the LUN.
 * `snapshot_capacity` - (Optional, integer) The amount of snapshot capacity to allocate, specified in gigabytes. Only applies to Endurance storage.
-* `allowed_virtual_guest_ids` - (Optional, array of integers) Specifies allowed virtual guests. Virtual guests need to be in the same data center.
-* `allowed_hardware_ids` - (Optional, array of integers) Specifies allowed bare metal servers. Bare metal servers need to be in the same data center.
+* `allowed_virtual_guest_ids` - (Optional, array of integers) Specifies allowed virtual guests. Virtual guests need to be in the same data center. You can also use this field to list the virtual guests which were provided access to this storage via `ibm_compute_vm_instance`'s `block_storage_ids`. 
+* `allowed_hardware_ids` - (Optional, array of integers) Specifies allowed bare metal servers. Bare metal servers need to be in the same data center. You can also use this field to list the bare metals which were provided access to this storage via `ibm_compute_bare_metal`'s `block_storage_ids`. 
 * `allowed_ip_addresses` - (Optional, array of string) Specifies allowed IP addresses. IP addresses need to be in the same data center.
 
 

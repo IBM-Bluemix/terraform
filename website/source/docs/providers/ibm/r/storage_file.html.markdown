@@ -77,8 +77,8 @@ The following arguments are supported:
 * `capacity` - (Required, integer) The amount of storage capacity to allocate, expressed in gigabytes.
 * `iops` - (Required, float) The IOPS value for the storage instance. Available values for Endurance storage can be found in the [KnowledgeLayer docs](https://knowledgelayer.softlayer.com/learning/introduction-endurance-storage).
 * `snapshot_capacity` - (Optional, integer) The amount of snapshot capacity to allocate, expressed in gigabytes. Only applies to `Endurance` storage.
-* `allowed_virtual_guest_ids` - (Optional, array of integers) Specify allowed virtual guests. Virtual guests need to be in the same data center.
-* `allowed_hardware_ids`- (Optional, array of integers) Specify allowed bare metal servers. Bare metal servers need to be in the same data center.
+* `allowed_virtual_guest_ids` - (Optional, array of integers) Specify allowed virtual guests. Virtual guests need to be in the same data center. You can also use this field to list the virtual guests which were provided access to this storage via `ibm_compute_vm_instance`'s `file_storage_ids`. 
+* `allowed_hardware_ids`- (Optional, array of integers) Specify allowed bare metal servers. Bare metal servers need to be in the same data center. You can use also this field to list the bare metals which were provided access to this storage via `ibm_compute_bare_metal`'s `file_storage_ids`. 
 * `allowed_subnets` - (Optional, array of integers) Specify allowed subnets. Subnets should be in the same data center.
 * `allowed_ip_addresses` - (Optional, array of integers) Specify allowed IP addresses. IP addresses need to be in the same data center.
 * `snapshot` - (Optional) Specifies the parameter required for a snapshot schedule. Only applies to Endurance storage.

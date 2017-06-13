@@ -62,6 +62,9 @@ The following arguments are supported:
 
     **NOTE:** If you don't know the ID(s) for your SSH keys, [you can reference your SSH keys by their labels](../d/compute_ssh_key.html).
 
+* `file_storage_ids` - (Optional) An array of numbers. File storage this computing instance should have access to. File storage need to be in the same data center as the bare metal. If you are using this to authorize access to a storage then you shouldn't use `ibm_storage_file`'s `allowed_hardware_ids` to authorize access to any other bare metal instances in case that `ibm_storage_file` represent the same storage as the one being added to the current bare metal. 
+* `block_storage_ids` - (Optional) An array of numbers. Block storage this computing instance should have access to. Block storage need to be in the same data center as the bare metal. If you are using this to authorize access to a storage then you shouldn't use `ibm_storage_block`'s `allowed_hardware_ids` to authorize access to any other bare metal instances in case that `ibm_storage_block` represent the same storage as the one being added to the current bare metal. 
+
 * `post_install_script_uri` - (Optional, string) As defined in the [Bluemix Infrastructure (SoftLayer) API docs](https://sldn.softlayer.com/reference/datatypes/SoftLayer_Virtual_Guest_SupplementalCreateObjectOptions).
 *   `tags` - (Optional, array of strings) Set tags on this bare metal server. Permitted characters include: A-Z, 0-9, whitespace, _ (underscore), - (hyphen), . (period), and : (colon). All other characters will be removed.
 

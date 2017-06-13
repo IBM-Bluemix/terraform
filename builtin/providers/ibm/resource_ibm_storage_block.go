@@ -5,13 +5,14 @@ import (
 	"log"
 	"strconv"
 
+	"regexp"
+	"strings"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/softlayer/softlayer-go/datatypes"
 	"github.com/softlayer/softlayer-go/helpers/network"
 	"github.com/softlayer/softlayer-go/services"
 	"github.com/softlayer/softlayer-go/sl"
-	"regexp"
-	"strings"
 )
 
 func resourceIBMStorageBlock() *schema.Resource {
@@ -73,6 +74,7 @@ func resourceIBMStorageBlock() *schema.Resource {
 			"allowed_virtual_guest_ids": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeInt},
 				Set: func(v interface{}) int {
 					return v.(int)
@@ -111,6 +113,7 @@ func resourceIBMStorageBlock() *schema.Resource {
 			"allowed_hardware_ids": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeInt},
 				Set: func(v interface{}) int {
 					return v.(int)

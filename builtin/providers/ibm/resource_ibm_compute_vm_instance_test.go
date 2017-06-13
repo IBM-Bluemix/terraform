@@ -205,6 +205,49 @@ func TestAccIBMComputeVmInstance_PostInstallScriptUri(t *testing.T) {
 	})
 }
 
+func TestAccIBMComputeVmInstance_With_Network_Storage_Access(t *testing.T) {
+	var guest datatypes.Virtual_Guest
+	hostname := acctest.RandString(16)
+	domain := "storage.tfmvmuat.ibm.com"
+
+	configInstance := "ibm_compute_vm_instance.terraform-vsi-storage-access"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccIBMComputeVmInstanceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccessToStoragesBasic(hostname, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccIBMComputeVmInstanceExists("ibm_compute_vm_instance.terraform-vsi-storage-access", &guest),
+					resource.TestCheckResourceAttr(
+						configInstance, "hostname", hostname),
+					resource.TestCheckResourceAttr(
+						configInstance, "domain", domain),
+					resource.TestCheckResourceAttr(
+						configInstance, "datacenter", "wdc04"),
+					resource.TestCheckResourceAttr(
+						configInstance, "hourly_billing", "true"),
+					resource.TestCheckResourceAttr(
+						configInstance, "file_storage_ids.#", "1"),
+					resource.TestCheckResourceAttr(
+						configInstance, "block_storage_ids.#", "1"),
+				),
+			},
+			{
+				Config: testAccessToStoragesUpdate(hostname, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccIBMComputeVmInstanceExists("ibm_compute_vm_instance.terraform-vsi-storage-access", &guest),
+					resource.TestCheckResourceAttr(
+						configInstance, "file_storage_ids.#", "1"),
+					resource.TestCheckResourceAttr(
+						configInstance, "block_storage_ids.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccIBMComputeVmInstanceDestroy(s *terraform.State) error {
 	service := services.GetVirtualGuestService(testAccProvider.Meta().(ClientSession).SoftLayerSession())
 
@@ -375,5 +418,81 @@ resource "ibm_compute_vm_instance" "terraform-acceptance-test-disks" {
     image_id = %s
     disks = [25, 10]
 }`, hostname, domain, imageID)
+}
+
+const fsConfig1 = `
+resource "ibm_storage_file" "fs1" {
+  type              = "Endurance"
+  datacenter        = "wdc04"
+  capacity          = 20
+  iops              = 0.25
+  snapshot_capacity = 10
+}
+`
+
+const bsConfig1 = `resource "ibm_storage_block" "bs" {
+  type              = "Endurance"
+  datacenter        = "wdc04"
+  capacity          = 20
+  iops              = 0.25
+  snapshot_capacity = 10
+  os_format_type    = "Linux"
+}
+`
+
+const fsConfig2 = `resource "ibm_storage_file" "fs2" {
+  type              = "Endurance"
+  datacenter        = "wdc04"
+  capacity          = 20
+  iops              = 0.25
+  snapshot_capacity = 10
+}
+
+`
+
+func testAccessToStoragesBasic(hostname, domain string) string {
+	config := fmt.Sprintf(`
+resource "ibm_compute_vm_instance" "terraform-vsi-storage-access" {
+    hostname = "%s"
+    domain = "%s"
+    datacenter = "wdc04"
+    network_speed = 10
+    hourly_billing = true
+	file_storage_ids = ["${ibm_storage_file.fs1.id}"]
+	block_storage_ids = ["${ibm_storage_block.bs.id}"]
+
+    cores = 1
+    memory = 1024
+    local_disk = false
+    os_reference_code = "DEBIAN_7_64"
+    disks = [25, 10]
+}
+%s
+%s
+
+`, hostname, domain, fsConfig1, bsConfig1)
+	return config
+}
+
+func testAccessToStoragesUpdate(hostname, domain string) string {
+	return fmt.Sprintf(`
+resource "ibm_compute_vm_instance" "terraform-vsi-storage-access" {
+    hostname = "%s"
+    domain = "%s"
+    datacenter = "wdc04"
+    network_speed = 10
+    hourly_billing = true
+	file_storage_ids = ["${ibm_storage_file.fs2.id}"]
+	block_storage_ids = []
+    cores = 1
+    memory = 1024
+    local_disk = false
+    os_reference_code = "DEBIAN_7_64"
+    disks = [25, 10]
+}
+
+%s
+
+`, hostname, domain, fsConfig2)
 
 }

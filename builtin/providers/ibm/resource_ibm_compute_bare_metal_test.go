@@ -69,6 +69,49 @@ func TestAccIBMComputeBareMetal_Basic(t *testing.T) {
 	})
 }
 
+func TestAccIBMComputeBareMetal_With_Network_Storage_Access(t *testing.T) {
+	var bareMetal datatypes.Hardware
+	hostname := acctest.RandString(16)
+	domain := "storage.tfbmuat.ibm.com"
+
+	configInstance := "ibm_compute_bare_metal.terraform-bm-storage-access"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIBMComputeBareMetalDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testBareMetalAccessToStoragesBasic(hostname, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckIBMComputeBareMetalExists(configInstance, &bareMetal),
+					resource.TestCheckResourceAttr(
+						configInstance, "hostname", hostname),
+					resource.TestCheckResourceAttr(
+						configInstance, "domain", domain),
+					resource.TestCheckResourceAttr(
+						configInstance, "datacenter", "wdc04"),
+					resource.TestCheckResourceAttr(
+						configInstance, "hourly_billing", "true"),
+					resource.TestCheckResourceAttr(
+						configInstance, "file_storage_ids.#", "1"),
+					resource.TestCheckResourceAttr(
+						configInstance, "block_storage_ids.#", "1"),
+				),
+			},
+			{
+				Config: testBareMetalAccessToStoragesUpdate(hostname, domain),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckIBMComputeBareMetalExists(configInstance, &bareMetal),
+					resource.TestCheckResourceAttr(
+						configInstance, "file_storage_ids.#", "1"),
+					resource.TestCheckResourceAttr(
+						configInstance, "block_storage_ids.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckIBMComputeBareMetalDestroy(s *terraform.State) error {
 	service := services.GetHardwareService(testAccProvider.Meta().(ClientSession).SoftLayerSession())
 
@@ -162,4 +205,54 @@ resource "ibm_compute_bare_metal" "terraform-acceptance-test-1" {
     tags = ["mesos-master"]
 }
 `, hostname)
+}
+
+func testBareMetalAccessToStoragesBasic(hostname, domain string) string {
+	config := fmt.Sprintf(`
+resource "ibm_compute_bare_metal" "terraform-bm-storage-access" {
+    hostname = "%s"
+    domain = "%s"
+    os_reference_code = "UBUNTU_16_64"
+    datacenter = "wdc04"
+    network_speed = 100
+    hourly_billing = true
+    private_network_only = false
+    user_metadata = "{\"value\":\"newvalue\"}"
+    fixed_config_preset = "S1270_32GB_1X1TBSATA_NORAID"
+	
+    tags = ["mesos-master"]
+	file_storage_ids = ["${ibm_storage_file.fs1.id}"]
+	block_storage_ids = ["${ibm_storage_block.bs.id}"]
+}
+%s
+%s
+
+`, hostname, domain, fsConfig1, bsConfig1)
+	return config
+}
+
+func testBareMetalAccessToStoragesUpdate(hostname, domain string) string {
+	return fmt.Sprintf(`
+resource "ibm_compute_bare_metal" "terraform-bm-storage-access" {
+    hostname = "%s"
+    domain = "%s"
+    os_reference_code = "UBUNTU_16_64"
+    datacenter = "wdc04"
+    network_speed = 100
+    hourly_billing = true
+    private_network_only = false
+    user_metadata = "{\"value\":\"newvalue\"}"
+    fixed_config_preset = "S1270_32GB_1X1TBSATA_NORAID"
+	file_storage_ids = ["${ibm_storage_file.fs2.id}"]
+	block_storage_ids = []
+	
+    tags = ["mesos-master"]
+	file_storage_ids = ["${ibm_storage_file.fs2.id}"]
+
+}
+
+%s
+
+`, hostname, domain, fsConfig2)
+
 }

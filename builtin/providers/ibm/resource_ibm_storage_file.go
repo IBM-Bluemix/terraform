@@ -146,6 +146,7 @@ func resourceIBMStorageFile() *schema.Resource {
 			"allowed_virtual_guest_ids": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeInt},
 				Set: func(v interface{}) int {
 					return v.(int)
@@ -155,6 +156,7 @@ func resourceIBMStorageFile() *schema.Resource {
 			"allowed_hardware_ids": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeInt},
 				Set: func(v interface{}) int {
 					return v.(int)
