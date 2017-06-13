@@ -141,6 +141,26 @@ func resourceIBMComputeBareMetal() *schema.Resource {
 				ForceNew: true,
 			},
 
+			"file_storage_ids": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Set: func(v interface{}) int {
+					return v.(int)
+				},
+			},
+
+			"block_storage_ids": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Set: func(v interface{}) int {
+					return v.(int)
+				},
+			},
+
 			"post_install_script_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -300,6 +320,21 @@ func resourceIBMComputeBareMetalCreate(d *schema.ResourceData, meta interface{})
 		return err
 	}
 
+	var storageIds []int
+	if storageIdsSet := d.Get("file_storage_ids").(*schema.Set); len(storageIdsSet.List()) > 0 {
+		storageIds = expandIntList(storageIdsSet.List())
+
+	}
+	if storageIdsSet := d.Get("block_storage_ids").(*schema.Set); len(storageIdsSet.List()) > 0 {
+		storageIds = append(storageIds, expandIntList(storageIdsSet.List())...)
+	}
+	if len(storageIds) > 0 {
+		err := addAccessToStorageList(hwService.Id(id), id, storageIds, meta)
+		if err != nil {
+			return err
+		}
+	}
+
 	return resourceIBMComputeBareMetalRead(d, meta)
 }
 
@@ -315,6 +350,7 @@ func resourceIBMComputeBareMetalRead(d *schema.ResourceData, meta interface{}) e
 		"hostname,domain," +
 			"primaryIpAddress,primaryBackendIpAddress,privateNetworkOnlyFlag," +
 			"userData[value],tagReferences[id,tag[name]]," +
+			"allowedNetworkStorage[id,nasType]," +
 			"hourlyBillingFlag," +
 			"datacenter[id,name,longName]," +
 			"primaryNetworkComponent[networkVlan[id,primaryRouter,vlanNumber],maxSpeed]," +
@@ -364,6 +400,12 @@ func resourceIBMComputeBareMetalRead(d *schema.ResourceData, meta interface{}) e
 		d.Set("tags", tags)
 	}
 
+	storages := result.AllowedNetworkStorage
+	if len(storages) > 0 {
+		d.Set("block_storage_ids", flattenBlockStorageID(storages))
+		d.Set("file_storage_ids", flattenFileStorageID(storages))
+	}
+
 	connInfo := map[string]string{"type": "ssh"}
 	if !*result.PrivateNetworkOnlyFlag && result.PrimaryIpAddress != nil {
 		connInfo["host"] = *result.PrimaryIpAddress
@@ -377,12 +419,17 @@ func resourceIBMComputeBareMetalRead(d *schema.ResourceData, meta interface{}) e
 
 func resourceIBMComputeBareMetalUpdate(d *schema.ResourceData, meta interface{}) error {
 	id, _ := strconv.Atoi(d.Id())
+	service := services.GetHardwareService(meta.(ClientSession).SoftLayerSession())
 
 	if d.HasChange("tags") {
 		err := setHardwareTags(id, d, meta)
 		if err != nil {
 			return err
 		}
+	}
+	err := modifyStorageAccess(service.Id(id), id, meta, d)
+	if err != nil {
+		return err
 	}
 
 	return nil

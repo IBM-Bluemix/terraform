@@ -23,6 +23,22 @@ import (
 	"github.com/softlayer/softlayer-go/sl"
 )
 
+type storageIds []int
+
+func (s storageIds) Storages(meta interface{}) ([]datatypes.Network_Storage, error) {
+	storageService := services.GetNetworkStorageService(meta.(ClientSession).SoftLayerSession())
+	storages := make([]datatypes.Network_Storage, len(s))
+
+	for i, id := range s {
+		var err error
+		storages[i], err = storageService.Id(id).GetObject()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return storages, nil
+}
+
 const (
 	staticIPRouted = "STATIC_IP_ROUTED"
 
@@ -35,6 +51,9 @@ const (
 
 	virtualGuestAvailable    = "available"
 	virtualGuestProvisioning = "provisioning"
+
+	networkStorageMassAccessControlModificationException = "SoftLayer_Exception_Network_Storage_Group_MassAccessControlModification"
+	retryDelayForModifyingStorageAccess                  = 10 * time.Second
 )
 
 func resourceIBMComputeVmInstance() *schema.Resource {
@@ -242,6 +261,25 @@ func resourceIBMComputeVmInstance() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeInt},
 			},
 
+			"file_storage_ids": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Set: func(v interface{}) int {
+					return v.(int)
+				},
+			},
+
+			"block_storage_ids": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Set: func(v interface{}) int {
+					return v.(int)
+				},
+			},
 			"user_metadata": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -603,6 +641,20 @@ func resourceIBMComputeVmInstanceCreate(d *schema.ResourceData, meta interface{}
 		}
 	}
 
+	var storageIds []int
+	if fileStorageSet := d.Get("file_storage_ids").(*schema.Set); len(fileStorageSet.List()) > 0 {
+		storageIds = expandIntList(fileStorageSet.List())
+
+	}
+	if blockStorageSet := d.Get("block_storage_ids").(*schema.Set); len(blockStorageSet.List()) > 0 {
+		storageIds = append(storageIds, expandIntList(blockStorageSet.List())...)
+	}
+	if len(storageIds) > 0 {
+		err := addAccessToStorageList(service.Id(id), id, storageIds, meta)
+		if err != nil {
+			return err
+		}
+	}
 	// wait for machine availability
 
 	_, err = WaitForVirtualGuestAvailable(d, meta)
@@ -627,6 +679,7 @@ func resourceIBMComputeVmInstanceRead(d *schema.ResourceData, meta interface{}) 
 		"hostname,domain,startCpus,maxMemory,dedicatedAccountHostOnlyFlag,operatingSystemReferenceCode,blockDeviceTemplateGroup[id]," +
 			"primaryIpAddress,primaryBackendIpAddress,privateNetworkOnlyFlag," +
 			"hourlyBillingFlag,localDiskFlag," +
+			"allowedNetworkStorage[id,nasType]," +
 			"userData[value],tagReferences[id,tag[name]]," +
 			"datacenter[id,name,longName]," +
 			"primaryNetworkComponent[networkVlan[id]," +
@@ -736,6 +789,12 @@ func resourceIBMComputeVmInstanceRead(d *schema.ResourceData, meta interface{}) 
 		d.Set("tags", tags)
 	}
 
+	storages := result.AllowedNetworkStorage
+	if len(storages) > 0 {
+		d.Set("block_storage_ids", flattenBlockStorageID(storages))
+		d.Set("file_storage_ids", flattenFileStorageID(storages))
+	}
+
 	// Set connection info
 	connInfo := map[string]string{"type": "ssh"}
 	if !*result.PrivateNetworkOnlyFlag && result.PrimaryIpAddress != nil {
@@ -818,6 +877,11 @@ func resourceIBMComputeVmInstanceUpdate(d *schema.ResourceData, meta interface{}
 		}
 	}
 
+	err = modifyStorageAccess(service.Id(id), id, meta, d)
+	if err != nil {
+		return err
+	}
+
 	// Upgrade "cores", "memory" and "network_speed" if provided and changed
 	upgradeOptions := map[string]float64{}
 	if d.HasChange("cores") {
@@ -852,6 +916,40 @@ func resourceIBMComputeVmInstanceUpdate(d *schema.ResourceData, meta interface{}
 	}
 
 	return resourceIBMComputeVmInstanceRead(d, meta)
+}
+
+func modifyStorageAccess(sam storageAccessModifier, deviceID int, meta interface{}, d *schema.ResourceData) error {
+	var remove, add []int
+	if d.HasChange("file_storage_ids") {
+		o, n := d.GetChange("file_storage_ids")
+		os := o.(*schema.Set)
+		ns := n.(*schema.Set)
+
+		remove = expandIntList(os.Difference(ns).List())
+		add = expandIntList(ns.Difference(os).List())
+	}
+	if d.HasChange("block_storage_ids") {
+		o, n := d.GetChange("block_storage_ids")
+		os := o.(*schema.Set)
+		ns := n.(*schema.Set)
+
+		remove = append(remove, expandIntList(os.Difference(ns).List())...)
+		add = append(add, expandIntList(ns.Difference(os).List())...)
+	}
+
+	if len(add) > 0 {
+		err := addAccessToStorageList(sam, deviceID, add, meta)
+		if err != nil {
+			return err
+		}
+	}
+	if len(remove) > 0 {
+		err := removeAccessToStorageList(sam, deviceID, remove, meta)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func resourceIBMComputeVmInstanceDelete(d *schema.ResourceData, meta interface{}) error {
@@ -1075,6 +1173,53 @@ func setGuestTags(id int, tags string, meta interface{}) error {
 	_, err := service.Id(id).SetTags(sl.String(tags))
 	if err != nil {
 		return fmt.Errorf("Could not set tags on virtual guest %d", id)
+	}
+	return nil
+}
+
+type storageAccessModifier interface {
+	AllowAccessToNetworkStorageList([]datatypes.Network_Storage) (resp bool, err error)
+	RemoveAccessToNetworkStorageList([]datatypes.Network_Storage) (resp bool, err error)
+}
+
+func addAccessToStorageList(sam storageAccessModifier, deviceID int, ids storageIds, meta interface{}) error {
+	s, err := ids.Storages(meta)
+	if err != nil {
+		return err
+	}
+	for {
+		_, err := sam.AllowAccessToNetworkStorageList(s)
+		if err != nil {
+			if apiErr, ok := err.(sl.Error); ok && apiErr.Exception == networkStorageMassAccessControlModificationException {
+				log.Printf("[DEBUG]  Allow access to storage failed with error %q. Will retry again after %q", err, retryDelayForModifyingStorageAccess)
+				time.Sleep(retryDelayForModifyingStorageAccess)
+				continue
+			}
+			return fmt.Errorf("Could not authorize Device %d, access to the following storages %q, %q", deviceID, ids, err)
+		}
+		log.Printf("[INFO] Device authorized to access %q", ids)
+		break
+	}
+	return nil
+}
+
+func removeAccessToStorageList(sam storageAccessModifier, deviceID int, ids storageIds, meta interface{}) error {
+	s, err := ids.Storages(meta)
+	if err != nil {
+		return err
+	}
+	for {
+		_, err := sam.RemoveAccessToNetworkStorageList(s)
+		if err != nil {
+			if apiErr, ok := err.(sl.Error); ok && apiErr.Exception == networkStorageMassAccessControlModificationException {
+				log.Printf("[DEBUG]  Remove access to storage failed with error %q. Will retry again after %q", err, retryDelayForModifyingStorageAccess)
+				time.Sleep(retryDelayForModifyingStorageAccess)
+				continue
+			}
+			return fmt.Errorf("Could not remove Device %d, access to the following storages %q, %q", deviceID, ids, err)
+		}
+		log.Printf("[INFO] Devices's access to %q have been removed", ids)
+		break
 	}
 	return nil
 }

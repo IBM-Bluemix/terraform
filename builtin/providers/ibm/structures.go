@@ -3,6 +3,7 @@ package ibm
 import (
 	"github.com/IBM-Bluemix/bluemix-go/api/cf/cfv2"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/softlayer/softlayer-go/datatypes"
 )
 
 //HashInt ...
@@ -76,6 +77,26 @@ func flattenPort(in []int) *schema.Set {
 	var out = make([]interface{}, len(in))
 	for i, v := range in {
 		out[i] = v
+	}
+	return schema.NewSet(HashInt, out)
+}
+
+func flattenFileStorageID(in []datatypes.Network_Storage) *schema.Set {
+	var out = []interface{}{}
+	for _, v := range in {
+		if *v.NasType == "NAS" {
+			out = append(out, *v.Id)
+		}
+	}
+	return schema.NewSet(HashInt, out)
+}
+
+func flattenBlockStorageID(in []datatypes.Network_Storage) *schema.Set {
+	var out = []interface{}{}
+	for _, v := range in {
+		if *v.NasType == "ISCSI" {
+			out = append(out, *v.Id)
+		}
 	}
 	return schema.NewSet(HashInt, out)
 }
