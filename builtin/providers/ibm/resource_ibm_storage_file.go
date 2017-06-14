@@ -212,6 +212,10 @@ func resourceIBMStorageFile() *schema.Resource {
 					},
 				},
 			},
+			"mountpoint": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -352,6 +356,12 @@ func resourceIBMStorageFileRead(d *schema.ResourceData, meta interface{}) error 
 	if storage.OsType != nil {
 		d.Set("os_type", *storage.OsType.Name)
 	}
+
+	mountpoint, err := services.GetNetworkStorageService(sess).Id(storageId).GetFileNetworkMountAddress()
+	if err != nil {
+		return fmt.Errorf("Error retrieving storage information: %s", err)
+	}
+	d.Set("mountpoint", mountpoint)
 
 	return nil
 }

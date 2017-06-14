@@ -96,3 +96,4 @@ The following attributes are exported:
 * `id` - Identifier of the storage volume.
 * `hostname` - The fully qualified domain name of the storage. 
 * `volumename` - The name of the storage volume.
+* `mountpoint` - The network mount address of the storage.

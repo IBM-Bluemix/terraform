@@ -25,6 +25,7 @@ func TestAccIBMStorageFile_Basic(t *testing.T) {
 						"ibm_storage_file.fs_endurance", "type", "Endurance"),
 					resource.TestCheckResourceAttr(
 						"ibm_storage_file.fs_endurance", "capacity", "20"),
+					resource.TestCheckResourceAttrSet("ibm_storage_file.fs_endurance", "mountpoint"),
 					resource.TestCheckResourceAttr(
 						"ibm_storage_file.fs_endurance", "iops", "0.25"),
 					resource.TestCheckResourceAttr(
@@ -55,12 +56,14 @@ func TestAccIBMStorageFile_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_performance", "allowed_virtual_guest_ids.#", "1"),
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_performance", "allowed_subnets.#", "1"),
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_performance", "allowed_ip_addresses.#", "1"),
+					resource.TestCheckResourceAttrSet("ibm_storage_file.fs_endurance", "mountpoint"),
 				),
 			},
 
 			resource.TestStep{
 				Config: testAccCheckIBMStorageFileConfig_enablesnapshot,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("ibm_storage_file.fs_endurance", "mountpoint"),
 					// Endurance Storage
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_endurance", "snapshot_schedule.#", "3"),
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_endurance", "snapshot_schedule.0.scheduleType", "WEEKLY"),
@@ -80,6 +83,7 @@ func TestAccIBMStorageFile_Basic(t *testing.T) {
 			resource.TestStep{
 				Config: testAccCheckIBMStorageFileConfig_updatesnapshot,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("ibm_storage_file.fs_endurance", "mountpoint"),
 					// Endurance Storage
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_endurance", "snapshot_schedule.#", "3"),
 					resource.TestCheckResourceAttr("ibm_storage_file.fs_endurance", "snapshot_schedule.0.retentionCount", "2"),
