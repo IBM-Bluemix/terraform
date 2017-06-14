@@ -51,16 +51,16 @@ The following arguments are supported:
 
 * `name` - (Required) Name of the cluster.
 * `datacenter` - (Required)  The data center of the worker nodes. Use the `bluemix cs locations` command to find the datacenters. Installing Bluemix cli and Installing IBM-Containers plugin can be found [here](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started)
-* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with. The values can be retrieved from data source `ibm_org`.
-* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with. The values can be retrieved from data source `ibm_space`.
-* `account_guid` - (Required) The GUID for the Bluemix account that the cluster is associated with. The values can be retrieved from data source `ibm_account`.
+* `org_guid` - (Required) The GUID for the Bluemix organization that the cluster is associated with. The values can be retrieved from data source `ibm_org`, or by running the `bx iam orgs --guid` command in the [Bluemix CLI](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
+* `space_guid` - (Required) The GUID for the Bluemix space that the cluster is associated with. The values can be retrieved from data source `ibm_space`, or by running the `bx iam space <space-name> --guid` command in the Bluemix CLI.
+* `account_guid` - (Required) The GUID for the Bluemix account that the cluster is associated with. The values can be retrieved from data source `ibm_account`, or by running the `bx iam accounts` command in the Bluemix CLI.
 * `workers` - (Required) The worker nodes that needs to be added to the cluster.
-* `machinetype` - (Optional) The machine type of the worker nodes. Use the `bluemix cs machine-types <datacenter>` command to find the machinetype supported for a datacenter.
+* `machinetype` - (Optional) The machine type of the worker nodes. The value can be retrieved by running the `bx cs machine-types <data-center>` command in the Bluemix CLI.
 * `billing` -  (Optional) The billing type for the instance. Accepted values are `hourly` or `monthly`.
 * `isolation` - (Optional) Accepted values are `public` or `private`.
-* `public_vlan_id`- (Optional) The public VLAN of the worker node. Use the `bluemix cs vlans` command to find available public and private VLANs for a datacenter.
-* `private_vlan_id` - (Optional) The private VLAN of the worker node. Use the `bluemix cs vlans` command to find available public and private VLANs for a datacenter.
-* `subnet_id` - (Optional) The existing subnet ID that you want to add to the cluster. Use the `bluemix cs subnets` command to find the subnet.
+* `public_vlan_id`- (Optional) The public VLAN of the worker node. The value can be retrieved by running the `bx cs vlans <data-center>` command in the Bluemix CLI.
+* `private_vlan_id` - (Optional) The private VLAN of the worker node. The value can be retrieved by running the `bx cs vlans <data-center>` command in the Bluemix CLI.
+* `subnet_id` - (Optional) The existing subnet ID that you want to add to the cluster. The value can be retrieved by running the `bx cs subnets` command in the Bluemix CLI.
 * `no_subnet` - (Optional) The option if you do not want to automatically create a portable subnet.
 * `webhook` - (Optional) The webhook that you want to add to the cluster.
 * `wait_time_minutes` - (Optional) The duration, expressed in minutes, to wait for the cluster to become available before declaring it as created. It is also the same amount of time waited for no active transactions before proceeding with an update or deletion. Default value: `90`.

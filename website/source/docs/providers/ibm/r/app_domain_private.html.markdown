@@ -28,7 +28,7 @@ resource "ibm_app_domain_private" "domain" {
 The following arguments are supported:
 
 * `name` - (Required, string) The name of the domain.
-* `org_guid` - (Required, string) The GUID of the organization that owns the domain. The values can be retrieved from data source `ibm_org`.
+* `org_guid` - (Required, string) The GUID of the organization that owns the domain. The values can be retrieved from data source `ibm_org`, or by running the `bx iam orgs --guid` command in the [Bluemix CLI](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
 
 ## Attributes Reference
 

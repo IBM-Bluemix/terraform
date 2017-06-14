@@ -57,7 +57,7 @@ The following arguments are supported:
 * `regional_group` - (Required, string) Regional group for the auto scaling group.
 * `minimum_member_count` - (Required, integer) The fewest number of virtual guest members allowed in the auto scaling group.
 * `maximum_member_count` - (Required, integer) The greatest number of virtual guest members that are allowed in the auto scaling group.
-* `cooldown` - (Required, integer) The duration, expressed seconds, that the auto scaling group waits before performing another scaling action.
+* `cooldown` - (Required, integer) The duration, expressed in seconds, that the auto scaling group waits before performing another scaling action.
 * `termination_policy` - (Required, string) The termination policy for the auto scaling group.
 * `virtual_guest_member_template` - (Required, array) The template to create guest members with. Only one template can be configured. Accepted values can be found in the [ibm_compute_vm_instance](compute_vm_instance.html) resource.
 * `network_vlan_ids` - (Optional, array) Collection of VLAN IDs for this auto scaling group. Accepted values can be found in the [VLAN docs](https://control.softlayer.com/network/vlans). Click the desired VLAN and note the ID on the resulting URL. Or, you can [refer to a VLAN by name using a data source](../d/network_vlan.html).

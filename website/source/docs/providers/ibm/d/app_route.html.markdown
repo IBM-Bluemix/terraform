@@ -26,7 +26,7 @@ data "ibm_app_route" "route" {
 The following arguments are supported:
 
 * `domain_guid` - (Required, string) The GUID of the associated domain. The values can be retrieved from the `ibm_app_domain_shared` data source.
-* `space_guid` - (Required, string) The GUID of the space where you want to create the route. The values can be retrieved from the `ibm_space` data source, or by running the `bx iam space <space_name> --guid` command in the [Bluemix CLI](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
+* `space_guid` - (Required, string) The GUID of the space where you want to create the route. The values can be retrieved from the `ibm_space` data source, or by running the `bx iam space <space-name> --guid` command in the [Bluemix CLI](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
 * `host` - (Optional, string) The host portion of the route. Required for shared domains.
 * `port` - (Optional, int) The port of the route. Supported for domains of TCP router groups only.
 * `path` - (Optional, string) The path for a route as raw text. Paths must be between 2 and 128 characters. Paths must start with a forward slash (/). Paths must not contain a question mark (?).
