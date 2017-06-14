@@ -12,7 +12,7 @@ Provides a `VLAN` resource. This allows public and private VLANs to be created, 
 
 The default SoftLayer account does not have permission to create a VLAN via SoftLayer API. To create a VLAN with Terraform, you should have permissions to create a VLAN in advance. Contact a SoftLayer sales person or open a ticket.
 
-Existed VLANs can be managed by Terraform with the `terraform import` command. It requires a SoftLayer VLAN ID from  [VLANs](https://control.softlayer.com/network/vlans). Once the IDs are imported, they provides useful information such as subnets and child resource counts. When `terraform destroy` is run, the VLANs' billing item will be deleted. However, the VLAN remains in SoftLayer until resources such as virtual guests, secondary subnets, and firewalls on the VLAN are deleted. 
+Existed VLANs can be managed by Terraform with the `terraform import` command. It requires a VLAN ID from the  [SoftLayer Customer Portal](https://control.softlayer.com/network/vlans). Once the IDs are imported, they provides useful information such as subnets and child resource counts. When `terraform destroy` is run, the VLANs' billing item will be deleted. The VLAN remains in SoftLayer until resources such as virtual guests, secondary subnets, and firewalls on the VLAN are deleted. 
 
 For additional details please refer to [SoftLayer API docs](http://sldn.softlayer.com/reference/datatypes/SoftLayer_Network_Vlan).
 
@@ -47,5 +47,5 @@ The following attributes are exported:
 * `id` - ID of the VLAN.
 * `vlan_number` - The VLAN number as recorded within the SoftLayer network. This is configured directly on SoftLayer's networking equipment.
 * `softlayer_managed` - Whether the VLAN is managed by SoftLayer or not. If the VLAN is created by SoftLayer automatically while other resources are created, set to `true`. If the VLAN is created by a user via the SoftLayer API, portal, or ticket, set to `false`.
-* `child_resource_count` - A count of all of the resources, such as virtual servers and other network components, that are connected to the VLAN. 
+* `child_resource_count` - A count of the resources, such as virtual servers and other network components, that are connected to the VLAN. 
 * `subnets` - Collection of subnets associated with the VLAN.

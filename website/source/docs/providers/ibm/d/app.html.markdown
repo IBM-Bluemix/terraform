@@ -24,7 +24,7 @@ data "ibm_app" "testacc_ds_app" {
 The following arguments are supported:
 
 * `name` - (Required, string) The name of the application. The value can be retrieved by running the `bx app list` command in the [Bluemix CLI](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
-* `space_guid` - (Required, string) The GUID of the Bluemix space where the application is deployed. The value can be retrieved with the `ibm_space` data source, or by running the `bx iam space <space_name> --guid` command in the Bluemix CLI.
+* `space_guid` - (Required, string) The GUID of the Bluemix space where the application is deployed. The value can be retrieved with the `ibm_space` data source, or by running the `bx iam space <space-name> --guid` command in the Bluemix CLI.
 
 ## Attributes Reference
 
