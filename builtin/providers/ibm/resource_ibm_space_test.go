@@ -43,6 +43,43 @@ func TestAccIBMSpace_Basic(t *testing.T) {
 	})
 }
 
+func TestAccIBMSpace_with_roles(t *testing.T) {
+	var conf cfv2.SpaceFields
+	name := fmt.Sprintf("terraform_%d", acctest.RandInt())
+	updatedName := fmt.Sprintf("terraform_updated_%d", acctest.RandInt())
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckIBMSpaceDestroy,
+		Steps: []resource.TestStep{
+
+			resource.TestStep{
+				Config: testAccCheckIBMSpaceCreateWithRoles(name),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccCheckIBMSpaceExists("ibm_space.space", &conf),
+					resource.TestCheckResourceAttr("ibm_space.space", "org", cfOrganization),
+					resource.TestCheckResourceAttr("ibm_space.space", "name", name),
+					resource.TestCheckResourceAttr("ibm_space.space", "auditors.#", "1"),
+					resource.TestCheckResourceAttr("ibm_space.space", "managers.#", "1"),
+					resource.TestCheckResourceAttr("ibm_space.space", "developers.#", "1"),
+				),
+			},
+
+			resource.TestStep{
+				Config: testAccCheckIBMSpaceUpdateWithRoles(updatedName),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("ibm_space.space", "org", cfOrganization),
+					resource.TestCheckResourceAttr("ibm_space.space", "name", updatedName),
+					resource.TestCheckResourceAttr("ibm_space.space", "auditors.#", "1"),
+					resource.TestCheckResourceAttr("ibm_space.space", "managers.#", "2"),
+					resource.TestCheckResourceAttr("ibm_space.space", "developers.#", "1"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckIBMSpaceExists(n string, obj *cfv2.SpaceFields) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
@@ -107,5 +144,30 @@ resource "ibm_space" "space" {
     org = "%s"
 	name = "%s"
 }`, cfOrganization, updatedName)
+
+}
+
+func testAccCheckIBMSpaceCreateWithRoles(name string) string {
+	return fmt.Sprintf(`
+	
+resource "ibm_space" "space" {
+    org = "%s"
+	name = "%s"
+	auditors = ["%s"]
+	managers = ["%s"]
+	developers = ["%s"]
+}`, cfOrganization, name, ibmid1, ibmid1, ibmid1)
+
+}
+
+func testAccCheckIBMSpaceUpdateWithRoles(updatedName string) string {
+	return fmt.Sprintf(`
+resource "ibm_space" "space" {
+    org = "%s"
+	name = "%s"
+	auditors = ["%s"]
+	managers = ["%s", "%s"]
+	developers = ["%s"]
+}`, cfOrganization, updatedName, ibmid2, ibmid2, ibmid1, ibmid2)
 
 }

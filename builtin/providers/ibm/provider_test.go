@@ -11,6 +11,8 @@ import (
 
 var cfOrganization string
 var cfSpace string
+var ibmid1 string
+var ibmid2 string
 
 func init() {
 	cfOrganization = os.Getenv("IBM_ORG")
@@ -20,6 +22,15 @@ func init() {
 	cfSpace = os.Getenv("IBM_SPACE")
 	if cfSpace == "" {
 		fmt.Println("[WARN] Set the environment variable IBM_SPACE for testing ibm_space  resource Some tests for that resource will fail if this is not set correctly")
+	}
+	ibmid1 = os.Getenv("IBM_ID1")
+	if ibmid1 == "" {
+		fmt.Println("[WARN] Set the environment variable IBM_ID1 for testing ibm_space resource Some tests for that resource will fail if this is not set correctly")
+	}
+
+	ibmid2 = os.Getenv("IBM_ID2")
+	if ibmid2 == "" {
+		fmt.Println("[WARN] Set the environment variable IBM_ID2 for testing ibm_space resource Some tests for that resource will fail if this is not set correctly")
 	}
 }
 

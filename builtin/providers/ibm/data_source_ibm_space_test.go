@@ -30,6 +30,7 @@ func testAccCheckIBMSpaceDataSourceConfig() string {
 data "ibm_space" "testacc_ds_space" {
     org = "%s"
 	space = "%s"
-}`, cfOrganization, cfSpace)
+	managers = ["%s"]
+}`, cfOrganization, cfSpace, ibmid1)
 
 }

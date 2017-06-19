@@ -16,11 +16,28 @@ func dataSourceIBMSpace() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-
 			"org": {
 				Description: "The org this space belongs to",
 				Type:        schema.TypeString,
 				Required:    true,
+			},
+			"auditors": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The IBMID of the users who  have auditor role in this space, ex - user@example.com",
+			},
+			"managers": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The IBMID of the users who  have manager role in this space, ex - user@example.com",
+			},
+			"developers": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "The IBMID of the users who  have developer role in this space, ex - user@example.com",
 			},
 		},
 	}
@@ -46,7 +63,27 @@ func dataSourceIBMSpaceRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error retrieving space: %s", err)
 	}
 
-	d.SetId(spaceFields.GUID)
+	spaceGUID := spaceFields.GUID
+	d.SetId(spaceGUID)
+
+	auditors, err := spaceAPI.ListAuditors(spaceGUID)
+	if err != nil {
+		return fmt.Errorf("Error retrieving auditors in the space: %s", err)
+	}
+
+	managers, err := spaceAPI.ListManagers(spaceGUID)
+	if err != nil {
+		return fmt.Errorf("Error retrieving managers in the space: %s", err)
+	}
+
+	developers, err := spaceAPI.ListDevelopers(spaceGUID)
+	if err != nil {
+		return fmt.Errorf("Error retrieving developers in space: %s", err)
+	}
+
+	d.Set("auditors", flattenSpaceRoleUsers(auditors))
+	d.Set("managers", flattenSpaceRoleUsers(managers))
+	d.Set("developers", flattenSpaceRoleUsers(developers))
 
 	return nil
 }

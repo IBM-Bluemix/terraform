@@ -100,3 +100,11 @@ func flattenBlockStorageID(in []datatypes.Network_Storage) *schema.Set {
 	}
 	return schema.NewSet(HashInt, out)
 }
+
+func flattenSpaceRoleUsers(in []cfv2.SpaceRole) *schema.Set {
+	var out = []interface{}{}
+	for _, v := range in {
+		out = append(out, v.UserName)
+	}
+	return schema.NewSet(schema.HashString, out)
+}
